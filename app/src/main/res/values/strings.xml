@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">ColetaLeite_Shefa</string>
+    <string name="btn_baixar_linhas">BAIXAR LINHAS</string>
+    <string name="btn_exibir_linhas">EXIBIR LINHAS</string>
+    <string name="text1">Lista dos Produtores</string>
+    <string name="text2">Selecione a linha do dia </string>
+    <string name="btncaptura">Capturar Posições</string>
+    <string name="btnsalvar">Salvar</string>
+    <string name="txtlati">LATITUDE: </string>
+    <string name="txtlongi">LONGITUDE: </string>
+    <string name="btn_enviar_dados">Enviar os Dados</string>
+    <string name="btn_mapa_rotas">Ver rotas no mapa</string>
+    <string name="btn_mapa_produtor">Visualizar mapa do produtor</string>
+    <string name="title_activity_mapa_produtor">Mapa</string>
+</resources>
