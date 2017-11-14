@@ -3,19 +3,21 @@ package br.com.shefa.coletaleite_shefa
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.ProgressDialog
-import android.content.Context
-import android.content.DialogInterface
+import android.content.*
 import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.telephony.TelephonyManager
 import android.util.Log
+import android.widget.TextView
 import br.com.shefa.coletaleite_shefa.BD_Interno.DB_Interno
 import br.com.shefa.coletaleite_shefa.Conexao.TestarConexao
+import br.com.shefa.coletaleite_shefa.Gps.GPS_Service
 import br.com.shefa.coletaleite_shefa.Gps.Gps
 import br.com.shefa.coletaleite_shefa.Objetos.ObjetosPojo
 import br.com.shefa.coletaleite_shefa.Permissoes.PermissionUtils
+import br.com.shefa.coletaleite_shefa.R.id.kmtext
 import br.com.shefa.coletaleite_shefa.Toast.ToastManager
 import com.android.volley.Request
 import com.android.volley.RequestQueue
@@ -38,6 +40,30 @@ class MainActivity : AppCompatActivity() {
     var contando_registros:Int = 0
     var jsonEnvia:String = ""
     var enviaDados:Int = 0
+    var km: String? = null//dia 02/01/2017
+    private var broadcastReceiver: BroadcastReceiver? = null
+
+
+    override fun onResume() {//serve para mostrar o texto da outra classe
+        super.onResume()
+        if (broadcastReceiver == null) {
+            broadcastReceiver = object : BroadcastReceiver() {
+                override fun onReceive(context: Context, intent: Intent) {
+                    //  ToastManager.show(getApplicationContext(), "Atualizando GPS: "  +intent.getExtras().get("coordinates"), ToastManager.INFORMATION);
+                    km = intent.extras!!.get("distancia").toString()  //dia 02/01/2017
+                    kmtext.setText("Distancia KM: " + km)  //dia 02/01/2017
+
+                }
+            }
+        }
+        registerReceiver(broadcastReceiver, IntentFilter("location_update"))
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        if (broadcastReceiver != null) {
+            unregisterReceiver(broadcastReceiver)
+        }
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +78,6 @@ class MainActivity : AppCompatActivity() {
         val permissoes = arrayOf(Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.INTERNET)
         PermissionUtils.validate(this, 0, *permissoes)
 
-
         //click botao baixar linhas
         btn_baixar_linhas.setOnClickListener {
             conexao = TestarConexao().verificaConexao(this)
@@ -64,7 +89,20 @@ class MainActivity : AppCompatActivity() {
             }
         }//fim botao baixar linhas
 
+        //click botao exibir linhas vai para a tela listar produtores
+        btn_exibir_linhas.setOnClickListener{
+          //  val intent = Intent(this@MainActivity, ListarProdutores::class.java)
+            //intent.putExtra("imei",numeroImei)
+           // startActivity(intent)
+            val intent = Intent(this@MainActivity, GPS_Service::class.java)
+            startService(intent);
+        }//fim botao exibir linhas
 
+
+        btn_enviar_dados.setOnClickListener{
+            val intent = Intent(this@MainActivity, GPS_Service::class.java)
+            stopService(intent);
+        }
 
     }//fim do oncreate
 
@@ -161,6 +199,7 @@ class MainActivity : AppCompatActivity() {
                             if (contando_registros == 0) {
                                 banco!!.addColeta(coleta)//inserindo no banco de dados
                             } else {
+                                progress!!.dismiss();//encerra progress
                                 ToastManager.show(this@MainActivity, "ATENÇÃO!!! \n ARQUIVO JA IMPORTADO", ToastManager.WARNING)
                                 break
                             }

@@ -10,4 +10,7 @@ interface DadosInterface {
     fun addColeta(objetos: ObjetosPojo);
     fun getALLColeta(): ArrayList<ObjetosPojo>
 
+    fun addTabelaKM(objetos: ObjetosPojo)
+    fun getTabelaKM():ArrayList<ObjetosPojo>
+
 }

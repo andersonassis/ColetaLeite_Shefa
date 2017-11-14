@@ -21,7 +21,7 @@ import br.com.shefa.coletaleite_shefa.Objetos.ObjetosPojo;
 public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     //Campos da tabela tabela_mapeamento
     private static final int DB_VERSION            = 1;
-    private static final String DB_NAME            = "mapeamento.db";
+    private static final String DB_NAME            = "captacao.db";
     private static final String TABLE_NAME         = "tabela_coleta";
     private static final String ID                 = "_id";//id do ax e banco
     private static final String ID2                = "_id2";//id da coleta
@@ -45,12 +45,28 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     private static final String SALVOU             = "_salvou";
     private static final String PEDAGIO             = "_pedagio";
 
+    //VARIAVEIS DA TABELA DO KM
+    private static final String TABLE_NAME_KM       = "somakm";
+    private static final String IDKM                = "_idkm";//id
+    private static final String DATAKM              = "_datakm";
+    private static final String ROTAKM              = "_rotakm";
+    private static final String SUBROTAKM           = "_subRotakm";
+    private static final String IMEIKM              = "_imeikm";
+    private static final String QTDKM               = "_qtdkm";
+
+
+
     //criando a tabela que vai conter os dados em geral
     String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" + ID + " INTEGER PRIMARY KEY," + ID2 + " TEXT, " + DATACOLETA + " TEXT," + ROTA + " TEXT," + SUBROTA + " TEXT," + CODTRANSPORTADORA + " TEXT, " + COD_PRODUTOR + " TEXT," + NOME_PRODUTOR + " TEXT,"
             + ENDERECO_PRODUTOR + " TEXT," + CIDADE + " TEXT," + QTD +" TEXT, "+ IMEI + " TEXT," + TEMPERATURA +" TEXT, " + ALISAROL + " TEXT, " + BOCA + " TEXT, "  + LATITUDE + " REAL," + LONGITUDE + " REAL,"
             + OBS + " CHAR(150)," + DATAHORA + " TEXT," + SALVOU + " TEXT," + PEDAGIO + " TEXT  )";
 
+
+    String CREATE_TABLEKM = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_KM + " (" + IDKM + " INTEGER PRIMARY KEY, " + DATAKM +" TEXT, " + ROTAKM +" TEXT, "  + SUBROTAKM + " TEXT, " + IMEIKM + " TEXT, " + QTDKM + " TEXT  )";
+
+
     String DROP_TABLE  = "DROP TABLE IF EXISTS " + TABLE_NAME;
+    String DROP_TABLEKM  = "DROP TABLE IF EXISTS " + TABLE_NAME_KM;
 
     //construtor
     public DB_Interno(Context context) {
@@ -61,19 +77,21 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE);
+        db.execSQL(CREATE_TABLEKM);
+
         Log.e("criar",   "banco criado com sucesso");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(DROP_TABLE);
+        db.execSQL(DROP_TABLEKM);
         onCreate(db);
     }
 
     @Override
     public void addColeta(@NotNull ObjetosPojo objetos) {
         SQLiteDatabase db = this.getWritableDatabase();
-
         try {
             ContentValues values = new ContentValues();
             values.put(ID, objetos.getId());
@@ -181,6 +199,126 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     }//fim do contandoregistros
 
 
+    //buscando o idt para começar a gravar a latitude longitude por minuto da tabela2
+    public String buscaIdt(String data){
+        String QUERY = "SELECT  _id  FROM  " + TABLE_NAME + "  WHERE   _dataColeta  = '" + data + "'  ";
+        String num = "";
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            Cursor cursor = db.rawQuery(QUERY, null);
+            cursor.moveToLast();
+            num = cursor.getString(cursor.getColumnIndex("_id"));
+            StringBuilder sb = new StringBuilder();
+            sb.append(num);
+            db.close();
+            return num.toString();
 
+        }catch (Exception e){
+            Log.e("ERRO ", e + "");
+        }
+        return null;
+    }
+
+    //buscando o buscaLinha   para a tabela 2
+    public String buscaLinha(String data){
+        String QUERY = "SELECT  _subRota  FROM " + TABLE_NAME + " WHERE  _dataColeta = '" + data + "'  ";
+        String linha = "";
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            Cursor cursor = db.rawQuery(QUERY, null);
+            cursor.moveToLast();
+            linha = cursor.getString(cursor.getColumnIndex("_subRota"));
+            StringBuilder sb = new StringBuilder();
+            sb.append(linha);
+            db.close();
+            return linha.toString();
+
+        }catch (Exception e){
+            Log.e("ERRO ", e + "");
+        }
+        return null;
+    }
+
+
+
+    //buscando o buscaLinha   para a tabela 2
+    public String buscarota(String data){
+        String QUERY = "SELECT  _rota   FROM " + TABLE_NAME + " WHERE   _dataColeta = '" + data + "'  ";
+        String rota = "";
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            Cursor cursor = db.rawQuery(QUERY, null);
+            cursor.moveToLast();
+            rota = cursor.getString(cursor.getColumnIndex("_rota"));
+            StringBuilder sb = new StringBuilder();
+            sb.append(rota);
+            db.close();
+            return rota.toString();
+
+        }catch (Exception e){
+            Log.e("ERRO ", e + "");
+        }
+        return null;
+    }
+
+
+
+
+
+
+
+
+    //*******************aqui começa a tabela de km****************************
+
+    //aqui para a tabela do KM adicionar
+    @Override
+    public void addTabelaKM(@NotNull ObjetosPojo objetos) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(IDKM, objetos.getIdlinha());
+            values.put(DATAKM, objetos.getDatakm());
+            values.put(ROTAKM, objetos.getRotaKM());
+            values.put(SUBROTAKM, objetos.getSubRotaKM());
+            values.put(IMEIKM, objetos.getImeiKM());
+            values.put(QTDKM, objetos.getQuantidade());
+            db.insert(TABLE_NAME_KM, null, values);
+
+            db.close();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.e("Problema", e + "Problema ao gravar a tabela");
+        }
+
+    }
+
+
+    @NotNull
+    @Override  //buscar
+    public ArrayList<ObjetosPojo> getTabelaKM() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<ObjetosPojo> objetos = null;
+        try {
+            objetos = new ArrayList<ObjetosPojo>();
+            String QUERY = "SELECT * FROM " + TABLE_NAME_KM ;
+            Cursor cursor = db.rawQuery(QUERY, null);
+            if (!cursor.isLast()) {
+                while (cursor.moveToNext()) {
+                    ObjetosPojo coleta = new ObjetosPojo();
+                    coleta.setIdlinha(cursor.getString(0));
+                    coleta.setDatakm(cursor.getString(1));
+                    coleta.setSubRotaKM(cursor.getString(2));
+                    coleta.setImeiKM(cursor.getString(3));
+                    coleta.setQtdKM(cursor.getString(4));
+                    objetos.add(coleta);
+                }
+            }
+            db.close();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.e("Problemas", e + "Problema ao ler a tabela");
+        }
+        return objetos;
+    }
 
 }//fim da classe

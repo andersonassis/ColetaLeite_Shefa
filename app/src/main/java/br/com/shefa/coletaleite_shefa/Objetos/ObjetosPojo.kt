@@ -28,12 +28,25 @@ class ObjetosPojo  {
     var pedagio:String? = null
 
 
+    //variaceis para a tabela gpsKM
+    var idlinha:String? = null // id do AX
+    var datakm: String? = null  //data do dia
+    var rotaKM:String? = null
+    var subRotaKM: String? = null   // Linha
+    var imeiKM:String? = null   //imei do aparelho
+    var qtdKM:String? = null
+
+
+
+
+
     constructor(){
     }
 
     constructor(id: Int,id2:String, rota: String, dataColeta:String, subRota:String, codTransportadora:String, codProdutor:String,nomeProdutor:String,
                 enderecoProdutor:String, cidade:String,quantidade:String,imei:String,temperatiura:String,alisarol:String,boca:String,
-                latitude:String, longitude:String, dataHora:String, obs:String, salvou:String, pedagio:String) {
+                latitude:String, longitude:String, datahora:String, obs:String, salvou:String, pedagio:String,
+                idlinha:String,datakm:String, rotaKM:String,subRotaKM:String,imeiKM:String,qtdKM:String) {
         this.id = id
         this.id2 = id2
         this.rota = rota
@@ -51,10 +64,18 @@ class ObjetosPojo  {
         this.boca = boca
         this.latitude = latitude
         this.longitude = longitude
-        this.obs  = obs
         this.datahora  = datahora
+        this.obs  = obs
         this.salvou  = salvou
         this.pedagio = pedagio
+
+        //variaveis do km
+        this.idlinha = idlinha
+        this.datakm  = datakm
+        this.rotaKM  = rotaKM
+        this.subRotaKM = subRotaKM
+        this.imeiKM    = imeiKM
+        this.qtdKM     = qtdKM
     }
 
 
