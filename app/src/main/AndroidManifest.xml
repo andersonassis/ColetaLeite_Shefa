@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="br.com.shefa.coletaleite_shefa">
 
-
     <!-- permissoes necessarias do app -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -32,8 +31,9 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".Gps.GPS_Service"/>
+        <service android:name=".Gps.GPS_Service" />
 
+        <activity android:name=".ListarProdutores"></activity>
     </application>
 
 </manifest>

@@ -152,7 +152,7 @@ public class GPS_Service extends Service {
         db.close();
 
 
-        Intent i = new Intent("location_update"); //dia 02/01/2017
+        Intent i = new Intent("location_update");
         i.putExtra("distancia", distanciaFinal); //valor km
         sendBroadcast(i);
     }

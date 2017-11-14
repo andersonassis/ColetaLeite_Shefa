@@ -12,4 +12,5 @@
     <string name="btn_mapa_rotas">Ver rotas no mapa</string>
     <string name="btn_mapa_produtor">Visualizar mapa do produtor</string>
     <string name="title_activity_mapa_produtor">Mapa</string>
+    <string name="btn_iniciar">INICIAR</string>
 </resources>

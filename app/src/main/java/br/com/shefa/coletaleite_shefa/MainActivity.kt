@@ -91,17 +91,16 @@ class MainActivity : AppCompatActivity() {
 
         //click botao exibir linhas vai para a tela listar produtores
         btn_exibir_linhas.setOnClickListener{
-          //  val intent = Intent(this@MainActivity, ListarProdutores::class.java)
-            //intent.putExtra("imei",numeroImei)
-           // startActivity(intent)
-            val intent = Intent(this@MainActivity, GPS_Service::class.java)
-            startService(intent);
+            val intent = Intent(this@MainActivity, ListarProdutores::class.java)
+            intent.putExtra("imei",numeroImei)
+            startActivity(intent)
         }//fim botao exibir linhas
 
 
         btn_enviar_dados.setOnClickListener{
             val intent = Intent(this@MainActivity, GPS_Service::class.java)
             stopService(intent);
+
         }
 
     }//fim do oncreate
