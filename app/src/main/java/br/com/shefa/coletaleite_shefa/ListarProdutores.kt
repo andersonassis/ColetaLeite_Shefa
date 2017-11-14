@@ -1,5 +1,6 @@
 package br.com.shefa.coletaleite_shefa
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -17,8 +18,10 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import br.com.shefa.coletaleite_shefa.BD_Interno.DB_Interno
 import br.com.shefa.coletaleite_shefa.Gps.GPS_Service
+import br.com.shefa.coletaleite_shefa.Toast.ToastManager
 import kotlinx.android.synthetic.main.activity_listar_produtores.*
-import java.util.ArrayList
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ListarProdutores : AppCompatActivity() {
     var db: SQLiteDatabase? = null
@@ -29,6 +32,7 @@ class ListarProdutores : AppCompatActivity() {
     internal var posicao: Int = 0
     var banco: DB_Interno? = null
     var imei:String? = null
+    var data_sistemaListar:String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,13 +42,17 @@ class ListarProdutores : AppCompatActivity() {
         banco = DB_Interno(this)//chama o banco
         val alert = AlertDialog.Builder(this)
         imei =   getIntent().getStringExtra("imei");
+        data()
 
         btn_inicio.setOnClickListener{
             alert.setTitle("ATENÇÃO !!!")
-            alert.setMessage("DESEJA INICIAR A ROTA ?")
+            alert.setMessage("DESEJA INICIAR A LINHA " + label3 + " ?" )
             alert.setPositiveButton("INICIAR", DialogInterface.OnClickListener { dialog, whichButton ->
-                 val intent = Intent(this@ListarProdutores, GPS_Service::class.java)
-                 startService(intent);
+                 alterarData()//altera data se for de dias diferentes
+                 updateLinha()
+                 atualizandoGPS()
+                 onRestart()
+
             })
             alert.setNegativeButton("CANCELAR") { dialog, which ->  }
             alert.show()
@@ -55,6 +63,54 @@ class ListarProdutores : AppCompatActivity() {
         ListagemSpinner()
 
     }//fim do oncreate
+
+
+    //inicia o gps que pega passo a passo
+    fun atualizandoGPS() {
+        val intent = Intent(this@ListarProdutores, GPS_Service::class.java)
+        startService(intent);
+        ToastManager.show(this@ListarProdutores, "INICIO OK", ToastManager.INFORMATION)
+    }
+
+
+    //altera a data do registro se for clicado quando o arquivo é de outro dia
+    fun alterarData() {
+        val db = openOrCreateDatabase("captacao.db", Context.MODE_PRIVATE, null)
+        try {
+            val data = data_sistemaListar
+            val ctv = ContentValues()
+            ctv.put("_dataColeta", data)
+            val updtade1 = "UPDATE tabela_coleta SET  _dataColeta = '$data_sistemaListar' " //so vai trocar a data dos arquivos que não foram enviados
+            db.execSQL(updtade1)
+            db.close()
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    //update na linha
+    fun updateLinha(){
+        banco!!.updateLinhas(label3)// aqui vai escoher apenas a linha faz um update
+    }
+
+    //pegar a data do sistema
+    fun data(){
+        //recebendo  a data do sistema atual
+        val date = SimpleDateFormat("dd-MM-yyyy")
+        val data = Date()
+        val cal = Calendar.getInstance()
+        cal.time = data
+        val data_atual = cal.time
+        val data_sistema2 = date.format(data_atual)
+        data_sistemaListar = data_sistema2
+    }
+
+
+
+
+
+
 
     //metodo para buscar as linhas
     private fun ListagemSpinner() {
@@ -80,19 +136,24 @@ class ListarProdutores : AppCompatActivity() {
     private fun subRotaLinhas(): Any {
         val labels = ArrayList<String>()//para guardar as linhas em um array
         db = openOrCreateDatabase("captacao.db", Context.MODE_PRIVATE, null)
-        cursorSpinner = db!!.rawQuery("SELECT _subRota  FROM  tabela_coleta  WHERE   _salvou  <> '2'    GROUP BY  _subRota  ", null);//SELECT PARA PEGAR
-        if (cursorSpinner.moveToFirst()) {
-            do {
-                try {
-                    labels.add(cursorSpinner.getString(0))
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
 
-            } while (cursorSpinner.moveToNext())
+        try {
+            cursorSpinner = db!!.rawQuery("SELECT _subRota  FROM  tabela_coleta  WHERE   _salvou  <> '2'    GROUP BY  _subRota  ", null);//SELECT PARA PEGAR
+            if (cursorSpinner.moveToFirst()) {
+                do {
+                    try {
+                        labels.add(cursorSpinner.getString(0))
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+
+                } while (cursorSpinner.moveToNext())
+            }
+            cursorSpinner.close()
+            db!!.close()
+        }catch (e: Exception){
+            ToastManager.show(this@ListarProdutores, "FAVOR IMPORTAR AS LINHAS", ToastManager.INFORMATION)
         }
-        cursorSpinner.close()
-        db!!.close()
         return labels
     }// fim subRotaLinhas
 

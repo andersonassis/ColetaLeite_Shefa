@@ -262,6 +262,20 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     }
 
 
+    //update na linhas
+    public void updateLinhas(String Linha){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String updtade2 = "UPDATE  tabela_coleta  SET   _salvou  = '2'   WHERE    _subRota <> '"+Linha+"'   ";
+        try {
+            SQLiteDatabase db2 = this.getWritableDatabase();
+            String QUERY = (updtade2);
+            db2.execSQL(QUERY );
+            db2.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
 
 
