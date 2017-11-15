@@ -102,9 +102,13 @@ class MainActivity : AppCompatActivity() {
             alert.setTitle("ATENÇÃO !!!")
             alert.setMessage("DESEJA ENVIAR OS DADOS ?" )
             alert.setPositiveButton("ENVIAR", DialogInterface.OnClickListener { dialog, whichButton ->
+                //intent para parar o serviço gps
                 val intent = Intent(this@MainActivity, GPS_Service::class.java)
-                stopService(intent);
+                stopService(intent)
 
+                //intent para chamar a tela enviar dados
+                val intentdados = Intent(this@MainActivity, EnviarDados::class.java)
+                startActivity(intentdados)
 
             })
             alert.setNegativeButton("CANCELAR") { dialog, which ->  }

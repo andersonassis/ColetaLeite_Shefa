@@ -33,7 +33,9 @@
 
         <service android:name=".Gps.GPS_Service" />
 
-        <activity android:name=".ListarProdutores"></activity>
+        <activity android:name=".ListarProdutores" />
+        <activity android:name=".EnviarDados" />
+        <activity android:name=".AlteraDados"></activity>
     </application>
 
 </manifest>

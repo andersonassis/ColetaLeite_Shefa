@@ -181,7 +181,9 @@ class ListarProdutores : AppCompatActivity() {
         listView.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
             val sqlCursor = ad!!.getItem(position) as SQLiteCursor
             val idProdutor = sqlCursor.getString(sqlCursor.getColumnIndex("_id"))
+
             //chama a tela para inserir os dados
+
            /* val altera = Intent(applicationContext, AlteraDados::class.java)
             altera.putExtra("id_Produtor", idProdutor)
             altera.putExtra("linha", label3)
