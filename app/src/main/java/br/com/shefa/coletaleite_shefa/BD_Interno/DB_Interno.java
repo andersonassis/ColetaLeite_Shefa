@@ -276,6 +276,24 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
         }
     }
 
+    public String foiSalvo(String id){
+        String QUERY = "SELECT  _salvou  FROM " + TABLE_NAME + " WHERE  _id = '" + id + "' ";
+        String salvar = "";
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            Cursor cursor = db.rawQuery(QUERY, null);
+            cursor.moveToLast();
+            salvar = cursor.getString(cursor.getColumnIndex("_salvou"));
+            StringBuilder sb = new StringBuilder();
+            sb.append(salvar);
+            db.close();
+            return salvar.toString();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return "";
+    }
 
 
 

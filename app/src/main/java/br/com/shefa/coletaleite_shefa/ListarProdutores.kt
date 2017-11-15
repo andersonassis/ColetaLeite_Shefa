@@ -183,11 +183,10 @@ class ListarProdutores : AppCompatActivity() {
             val idProdutor = sqlCursor.getString(sqlCursor.getColumnIndex("_id"))
 
             //chama a tela para inserir os dados
-
-           /* val altera = Intent(applicationContext, AlteraDados::class.java)
+            val altera = Intent(applicationContext, AlteraDados::class.java)
             altera.putExtra("id_Produtor", idProdutor)
             altera.putExtra("linha", label3)
-            startActivity(altera)*/
+            startActivity(altera)
 
         })
         listView.setAdapter(ad)//chama o adaptador que monta a lista

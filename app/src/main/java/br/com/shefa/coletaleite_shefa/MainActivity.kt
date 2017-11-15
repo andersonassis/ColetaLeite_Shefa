@@ -17,6 +17,7 @@ import br.com.shefa.coletaleite_shefa.Gps.GPS_Service
 import br.com.shefa.coletaleite_shefa.Gps.Gps
 import br.com.shefa.coletaleite_shefa.Objetos.ObjetosPojo
 import br.com.shefa.coletaleite_shefa.Permissoes.PermissionUtils
+import br.com.shefa.coletaleite_shefa.R.id.btn_coleta_extra
 import br.com.shefa.coletaleite_shefa.R.id.kmtext
 import br.com.shefa.coletaleite_shefa.Toast.ToastManager
 import com.android.volley.Request
