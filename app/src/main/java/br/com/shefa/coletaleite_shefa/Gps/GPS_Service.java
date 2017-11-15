@@ -57,6 +57,7 @@ public class GPS_Service extends Service {
 
     @Override
     public void onCreate() {
+
         listener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -97,14 +98,12 @@ public class GPS_Service extends Service {
         data_sistema = data_sistema2;
         banco = new DB_Interno(this);
 
-
         locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-        //  locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 120000, 300, listener);//120000= 2 minutos 300= 300mts
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         if (locationManager!=null) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 500, listener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 100, listener);  // A CADA 5 SEGUNDOS E 100 MTS ATUALIZA
         }else{
             ToastManager.show(this, "SEM SINAL DE GPS", ToastManager.INFORMATION);
         }
@@ -141,6 +140,8 @@ public class GPS_Service extends Service {
         String rotas  = rotakm;
         String linhas = linhakm;
         String qtddkm = String.valueOf(distanciaFinal);
+
+
 
         ContentValues ctv = new ContentValues();
         ctv.put("_datakm", dthora);

@@ -65,7 +65,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -91,17 +90,33 @@ class MainActivity : AppCompatActivity() {
 
         //click botao exibir linhas vai para a tela listar produtores
         btn_exibir_linhas.setOnClickListener{
+            numeroImei = imei()
             val intent = Intent(this@MainActivity, ListarProdutores::class.java)
             intent.putExtra("imei",numeroImei)
             startActivity(intent)
         }//fim botao exibir linhas
 
 
+        //click botão enviar os dados
         btn_enviar_dados.setOnClickListener{
-            val intent = Intent(this@MainActivity, GPS_Service::class.java)
-            stopService(intent);
+            alert.setTitle("ATENÇÃO !!!")
+            alert.setMessage("DESEJA ENVIAR OS DADOS ?" )
+            alert.setPositiveButton("ENVIAR", DialogInterface.OnClickListener { dialog, whichButton ->
+                val intent = Intent(this@MainActivity, GPS_Service::class.java)
+                stopService(intent);
+
+
+            })
+            alert.setNegativeButton("CANCELAR") { dialog, which ->  }
+            alert.show()
+        }//FIM DO BOTAO ENVIAR OS DADOS
+
+
+        //click botão coleta extra
+        btn_coleta_extra.setOnClickListener{
 
         }
+
 
     }//fim do oncreate
 
@@ -230,6 +245,22 @@ class MainActivity : AppCompatActivity() {
         val deviceId = telephonyManager!!.getDeviceId()
         return  deviceId
     }//fim da função pegar IMEI
+
+
+    override fun onBackPressed() {
+        val alert = AlertDialog.Builder(this)
+        alert.setTitle("ATENÇÃO!!")
+        alert.setMessage("DESEJA SAIR DO APLICATIVO ?" )
+        alert.setPositiveButton("SAIR", DialogInterface.OnClickListener { dialog, whichButton ->
+            super.onBackPressed()
+            finish();
+            System.exit(0);
+        })
+        alert.setNegativeButton("CANCELAR") { dialog, which ->  }
+        alert.show()
+
+    }
+
 
 
 

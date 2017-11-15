@@ -46,13 +46,12 @@ class ListarProdutores : AppCompatActivity() {
 
         btn_inicio.setOnClickListener{
             alert.setTitle("ATENÇÃO !!!")
-            alert.setMessage("DESEJA INICIAR A LINHA " + label3 + " ?" )
+            alert.setMessage("DESEJA INICIAR A " + label3 + " ?" )
             alert.setPositiveButton("INICIAR", DialogInterface.OnClickListener { dialog, whichButton ->
                  alterarData()//altera data se for de dias diferentes
                  updateLinha()
                  atualizandoGPS()
                  onRestart()
-
             })
             alert.setNegativeButton("CANCELAR") { dialog, which ->  }
             alert.show()
@@ -63,7 +62,6 @@ class ListarProdutores : AppCompatActivity() {
         ListagemSpinner()
 
     }//fim do oncreate
-
 
     //inicia o gps que pega passo a passo
     fun atualizandoGPS() {
@@ -183,7 +181,6 @@ class ListarProdutores : AppCompatActivity() {
         listView.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
             val sqlCursor = ad!!.getItem(position) as SQLiteCursor
             val idProdutor = sqlCursor.getString(sqlCursor.getColumnIndex("_id"))
-
             //chama a tela para inserir os dados
            /* val altera = Intent(applicationContext, AlteraDados::class.java)
             altera.putExtra("id_Produtor", idProdutor)
