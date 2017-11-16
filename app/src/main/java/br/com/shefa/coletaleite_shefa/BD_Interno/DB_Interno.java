@@ -45,6 +45,7 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     private static final String SALVOU             = "_salvou";
     private static final String PEDAGIO            = "_pedagio";
     private static final String CONFIRMA_ENVIO     = "_confirmaEnvio";
+    private static final String RESPOSTA_SERVIDOR  = "_respostaServ";
 
     //VARIAVEIS DA TABELA DO KM
     private static final String TABLE_NAME_KM       = "somakm";
@@ -60,7 +61,7 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     //criando a tabela que vai conter os dados em geral
     String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" + ID + " INTEGER PRIMARY KEY," + ID2 + " TEXT, " + DATACOLETA + " TEXT," + ROTA + " TEXT," + SUBROTA + " TEXT," + CODTRANSPORTADORA + " TEXT, " + COD_PRODUTOR + " TEXT," + NOME_PRODUTOR + " TEXT,"
             + ENDERECO_PRODUTOR + " TEXT," + CIDADE + " TEXT," + QTD +" TEXT, "+ IMEI + " TEXT," + TEMPERATURA +" TEXT, " + ALISAROL + " TEXT, " + BOCA + " TEXT, "  + LATITUDE + " REAL," + LONGITUDE + " REAL,"
-            + OBS + " CHAR(150)," + DATAHORA + " TEXT," + SALVOU + " TEXT," + PEDAGIO + " TEXT, "+CONFIRMA_ENVIO +" TEXT )";
+            + OBS + " CHAR(150)," + DATAHORA + " TEXT," + SALVOU + " TEXT," + PEDAGIO + " TEXT, "+CONFIRMA_ENVIO +" TEXT, "+RESPOSTA_SERVIDOR+" TEXT  )";
 
 
     String CREATE_TABLEKM = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_KM + " (" + IDKM + " INTEGER PRIMARY KEY, " + DATAKM +" TEXT, " + ROTAKM +" TEXT, "  + SUBROTAKM + " TEXT, " + IMEIKM + " TEXT, " + QTDKM + " TEXT  )";
@@ -117,6 +118,7 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
             values.put(SALVOU,objetos.getSalvou());
             values.put(PEDAGIO,objetos.getPedagio());
             values.put(CONFIRMA_ENVIO,objetos.getConfirmaEnvio());
+            values.put(RESPOSTA_SERVIDOR,objetos.getRespostaServidor());
             db.insert(TABLE_NAME, null, values);
             db.close();
         }catch (Exception e){
@@ -160,6 +162,8 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
                     coleta.setSalvou(cursor.getString(19));
                     coleta.setPedagio(cursor.getString(20));
                     coleta.setConfirmaEnvio(cursor.getString(21));
+                    coleta.setRespostaServidor(cursor.getString(22));
+
                     objetos.add(coleta);
                 }
             }
@@ -333,7 +337,7 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
         int numero =0;
         SQLiteDatabase db = this.getReadableDatabase();
         try {
-            String QUERY = "SELECT * FROM " + TABLE_NAME + " WHERE  _salvou = '1'  ";
+            String QUERY = "SELECT * FROM " + TABLE_NAME + " WHERE   _salvou = '1'  ";
             Cursor cursor = db.rawQuery(QUERY, null);
             numero = cursor.getCount();
             db.close();
@@ -344,6 +348,22 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
         return 0;
     }
 
+
+
+    public int retornoServ(){
+        int numero =0;
+        SQLiteDatabase db = this.getReadableDatabase();
+        try {
+            String QUERY = "SELECT * FROM  " + TABLE_NAME + "  WHERE   _respostaServ  = '3'  ";
+            Cursor cursor = db.rawQuery(QUERY, null);
+            numero = cursor.getCount();
+            db.close();
+            return numero;
+        } catch (Exception e) {
+            Log.e("ERRO", e + "");
+        }
+        return 0;
+    }
 
 
     //enviar os arquivos

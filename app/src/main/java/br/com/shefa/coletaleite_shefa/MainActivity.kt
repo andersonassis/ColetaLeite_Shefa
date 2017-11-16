@@ -220,6 +220,7 @@ class MainActivity : AppCompatActivity() {
                             coleta.salvou   = "0"
                             coleta.pedagio  = ""
                             coleta.confirmaEnvio = "0"
+                            coleta.respostaServidor = ""
 
                             //aqui vai salvar no banco
                             //verificar se o arquivo ja foi importado

@@ -31,6 +31,7 @@ class EnviarDados : AppCompatActivity() {
     var jsonEnvia:String = ""
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_enviar_dados)
@@ -54,7 +55,13 @@ class EnviarDados : AppCompatActivity() {
         btn_enviar_dados2.setOnClickListener{
             conexao = TestarConexao().verificaConexao(this)
             if (conexao) {
-                enviardados()
+                val resposta = banco!!.retornoServ()
+                 if(resposta == 0) {
+                     enviardados()
+                 }else{
+                     ToastManager.show(this@EnviarDados, "ARQUIVOS JA FORAM ENVIADOS", ToastManager.INFORMATION)
+                 }
+
             } else {
                 ToastManager.show(this@EnviarDados, "SEM CONEXÃO COM INTERNET, VERIFIQUE", ToastManager.INFORMATION)
             }
@@ -82,7 +89,8 @@ class EnviarDados : AppCompatActivity() {
                     if (resposta.equals("Arquivo gerado com sucesso")) {
                         try {
                             Thread.sleep(3000)
-                            alterarContato()
+                            val reposta = "3"
+                            alterarContato(reposta)
                             progress!!.dismiss()
                             ToastManager.show(this@EnviarDados, " ENVIADO COM SUCESSO" + resposta, ToastManager.INFORMATION)
                             val intentdados = Intent(this@EnviarDados, MainActivity::class.java)
@@ -144,13 +152,17 @@ class EnviarDados : AppCompatActivity() {
 
 
     //altera os dados com status de salvou = 3
-    protected fun alterarContato() {
+    protected fun alterarContato(resp:String) {
         val db = openOrCreateDatabase("captacao.db", Context.MODE_PRIVATE, null)
         val  confirmaEnvio = "1"
         val ctv = ContentValues()
         ctv.put("_salvou", confirmaEnvio)
+        ctv.put("_respostaServ", resp)
+
         val updtade1 = "UPDATE  tabela_coleta  SET   _confirmaEnvio = ' $confirmaEnvio' WHERE  _dataColeta = '$data'"
+        val updtade2 = "UPDATE  tabela_coleta  SET   _respostaServ = ' $resp'  WHERE  _dataColeta = '$data' "
         db.execSQL(updtade1)
+        db.execSQL(updtade2)
         db.close()
     }
 

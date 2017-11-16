@@ -27,6 +27,7 @@ class ObjetosPojo  {
     var salvou:String? = null
     var pedagio:String? = null
     var confirmaEnvio:String? = null
+    var respostaServidor:String? = null
 
 
     //variaceis para a tabela gpsKM
@@ -46,7 +47,7 @@ class ObjetosPojo  {
 
     constructor(id: Int,id2:String, rota: String, dataColeta:String, subRota:String, codTransportadora:String, codProdutor:String,nomeProdutor:String,
                 enderecoProdutor:String, cidade:String,quantidade:String,imei:String,temperatiura:String,alisarol:String,boca:String,
-                latitude:String, longitude:String, datahora:String, obs:String, salvou:String, pedagio:String,confirmaEnvio:String,
+                latitude:String, longitude:String, datahora:String, obs:String, salvou:String, pedagio:String,confirmaEnvio:String,respostaServidor:String,
                 idlinha:String,datakm:String, rotaKM:String,subRotaKM:String,imeiKM:String,qtdKM:String) {
         this.id = id
         this.id2 = id2
@@ -70,6 +71,7 @@ class ObjetosPojo  {
         this.salvou  = salvou
         this.pedagio = pedagio
         this.confirmaEnvio = confirmaEnvio
+        this.respostaServidor = respostaServidor
 
         //variaveis do km
         this.idlinha = idlinha
