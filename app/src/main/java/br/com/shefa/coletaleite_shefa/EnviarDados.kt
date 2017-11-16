@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.MenuItem
+import br.com.shefa.coletaleite_shefa.Conexao.TestarConexao
+import br.com.shefa.coletaleite_shefa.Toast.ToastManager
 import kotlinx.android.synthetic.main.activity_enviar_dados.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -12,6 +14,7 @@ import java.util.*
 class EnviarDados : AppCompatActivity() {
     var data:String?=null
     var progress: ProgressDialog? = null
+    var conexao:Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,9 +24,13 @@ class EnviarDados : AppCompatActivity() {
 
 
         btn_enviar_dados2.setOnClickListener{
-            enviardados()
-            text_soma_litros.setText("litros")
-
+            conexao = TestarConexao().verificaConexao(this)
+            if (conexao) {
+                enviardados()
+                text_soma_litros.setText("litros")
+            } else {
+                ToastManager.show(this@EnviarDados, "SEM CONEXÃO COM INTERNET, VERIFIQUE", ToastManager.INFORMATION)
+            }
         }//fim do botao enviar dados2
 
 

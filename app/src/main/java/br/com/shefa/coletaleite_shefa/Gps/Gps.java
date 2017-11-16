@@ -48,7 +48,7 @@ public class Gps  {
 
             locationListener = new LocationListener() {
                 public void onLocationChanged(Location location) {
-                     atualizar(location);
+                    // atualizar(location);
                 }
 
                 public void onStatusChanged(String provider, int status, Bundle extras) { }
@@ -58,10 +58,16 @@ public class Gps  {
                 public void onProviderDisabled(String provider) { }
             };
 
-            if(locationListener != null) {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
+            if (locationManager!=null)
+            {
+                location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             }
-             else{
+            if (location!= null)
+            {
+                atualizar(location);
+            }else{
                 ToastManager.show(context, "ESTA SEM SINAL GPS,VÁ PARA UM LOCAL ABERTO", ToastManager.INFORMATION);
             }
 

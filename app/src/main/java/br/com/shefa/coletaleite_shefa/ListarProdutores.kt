@@ -105,11 +105,6 @@ class ListarProdutores : AppCompatActivity() {
     }
 
 
-
-
-
-
-
     //metodo para buscar as linhas
     private fun ListagemSpinner() {
         val lables2: ArrayList<String> = subRotaLinhas() as ArrayList<String>
@@ -181,13 +176,11 @@ class ListarProdutores : AppCompatActivity() {
         listView.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
             val sqlCursor = ad!!.getItem(position) as SQLiteCursor
             val idProdutor = sqlCursor.getString(sqlCursor.getColumnIndex("_id"))
-
             //chama a tela para inserir os dados
             val altera = Intent(applicationContext, AlteraDados::class.java)
             altera.putExtra("id_Produtor", idProdutor)
-            altera.putExtra("linha", label3)
             startActivity(altera)
-
+            finish()
         })
         listView.setAdapter(ad)//chama o adaptador que monta a lista
     }//fim criarListagem
