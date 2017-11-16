@@ -43,7 +43,8 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     private static final String OBS                = "_obs";
     private static final String DATAHORA           = "_dataHora";
     private static final String SALVOU             = "_salvou";
-    private static final String PEDAGIO             = "_pedagio";
+    private static final String PEDAGIO            = "_pedagio";
+    private static final String CONFIRMA_ENVIO     = "_confirmaEnvio";
 
     //VARIAVEIS DA TABELA DO KM
     private static final String TABLE_NAME_KM       = "somakm";
@@ -59,7 +60,7 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     //criando a tabela que vai conter os dados em geral
     String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" + ID + " INTEGER PRIMARY KEY," + ID2 + " TEXT, " + DATACOLETA + " TEXT," + ROTA + " TEXT," + SUBROTA + " TEXT," + CODTRANSPORTADORA + " TEXT, " + COD_PRODUTOR + " TEXT," + NOME_PRODUTOR + " TEXT,"
             + ENDERECO_PRODUTOR + " TEXT," + CIDADE + " TEXT," + QTD +" TEXT, "+ IMEI + " TEXT," + TEMPERATURA +" TEXT, " + ALISAROL + " TEXT, " + BOCA + " TEXT, "  + LATITUDE + " REAL," + LONGITUDE + " REAL,"
-            + OBS + " CHAR(150)," + DATAHORA + " TEXT," + SALVOU + " TEXT," + PEDAGIO + " TEXT  )";
+            + OBS + " CHAR(150)," + DATAHORA + " TEXT," + SALVOU + " TEXT," + PEDAGIO + " TEXT, "+CONFIRMA_ENVIO +" TEXT )";
 
 
     String CREATE_TABLEKM = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_KM + " (" + IDKM + " INTEGER PRIMARY KEY, " + DATAKM +" TEXT, " + ROTAKM +" TEXT, "  + SUBROTAKM + " TEXT, " + IMEIKM + " TEXT, " + QTDKM + " TEXT  )";
@@ -115,6 +116,7 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
             values.put(DATAHORA, objetos.getDatahora());
             values.put(SALVOU,objetos.getSalvou());
             values.put(PEDAGIO,objetos.getPedagio());
+            values.put(CONFIRMA_ENVIO,objetos.getConfirmaEnvio());
             db.insert(TABLE_NAME, null, values);
             db.close();
         }catch (Exception e){
@@ -157,6 +159,7 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
                     coleta.setDatahora(cursor.getString(18));
                     coleta.setSalvou(cursor.getString(19));
                     coleta.setPedagio(cursor.getString(20));
+                    coleta.setConfirmaEnvio(cursor.getString(21));
                     objetos.add(coleta);
                 }
             }
@@ -263,13 +266,16 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
 
 
     //update na linhas
-    public void updateLinhas(String Linha){
+    public void updateLinhas(String Linha, String data){
         SQLiteDatabase db = this.getReadableDatabase();
-        String updtade2 = "UPDATE  tabela_coleta  SET   _salvou  = '2'   WHERE    _subRota <> '"+Linha+"'   ";
+        String updtade1 = "UPDATE  tabela_coleta  SET   _confirmaEnvio  = '1'   WHERE    _subRota <> '"+Linha+"'   ";
+        String updtade2 = "UPDATE  tabela_coleta  SET   _salvou         = '1'  WHERE   _dataColeta = '" + data + "'  AND  _subRota <> '"+Linha+"' ";
         try {
             SQLiteDatabase db2 = this.getWritableDatabase();
-            String QUERY = (updtade2);
-            db2.execSQL(QUERY );
+            String QUERY1 = (updtade1);
+            String QUERY2 = (updtade2);
+            db2.execSQL(QUERY1 );
+            db2.execSQL(QUERY2 );
             db2.close();
         }catch (Exception e){
             e.printStackTrace();
@@ -294,6 +300,99 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
         }
         return "";
     }
+
+
+    //somando a quantidade de litros
+    public Double qtdLitros(String data){
+        String QUERY = "SELECT  _qtd  FROM " + TABLE_NAME + " WHERE   _dataColeta = '" + data + "'  AND  _qtd <> '' ";
+        String soma = "";
+        Double soma2 = 0.0;
+        Double total = 0.0;
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            Cursor cursor = db.rawQuery(QUERY, null);
+            while (cursor.moveToNext()) {
+                soma = cursor.getString(cursor.getColumnIndex("_qtd"));
+                soma2 = Double.valueOf(soma);
+                total = total + soma2;
+            }
+            db.close();
+            return total;
+
+        }catch (Exception e){
+            Log.e("ERRO ", e + "");
+            db.close();
+        }
+        return null;
+    }
+
+
+
+    //verificar quantos registros tem salvo pra ser enviado
+    public int enviarDados(){
+        int numero =0;
+        SQLiteDatabase db = this.getReadableDatabase();
+        try {
+            String QUERY = "SELECT * FROM " + TABLE_NAME + " WHERE  _salvou = '1'  ";
+            Cursor cursor = db.rawQuery(QUERY, null);
+            numero = cursor.getCount();
+            db.close();
+            return numero;
+        } catch (Exception e) {
+            Log.e("ERRO", e + "");
+        }
+        return 0;
+    }
+
+
+
+    //enviar os arquivos
+    public ArrayList<ObjetosPojo> Envia(String data) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<ObjetosPojo> objetos = null;
+        try {
+            objetos = new ArrayList<ObjetosPojo>();
+            String QUERY = "SELECT * FROM " + TABLE_NAME + " WHERE " + DATACOLETA + " ='" + data + "' AND  _salvou = 1   AND  _qtd <> '' ";
+            Cursor cursor = db.rawQuery(QUERY, null);
+            if (!cursor.isLast()) {
+                while (cursor.moveToNext()) {
+                    ObjetosPojo coleta = new ObjetosPojo();
+                    coleta.setId(cursor.getInt(0));
+                    coleta.setId2(cursor.getString(1));
+                    coleta.setDataColeta(cursor.getString(2));
+                    coleta.setRota(cursor.getString(3));
+                    coleta.setSubRota(cursor.getString(4));
+                    coleta.setCodTransportadora(cursor.getString(5));
+                    coleta.setCodProdutor(cursor.getString(6));
+                    coleta.setNomeProdutor(cursor.getString(7));
+                    coleta.setEnderecoProdutor(cursor.getString(8));
+                    coleta.setCidade(cursor.getString(9));
+                    coleta.setQuantidade(cursor.getString(10));
+                    coleta.setImei(cursor.getString(11));
+                    coleta.setTemperatiura(cursor.getString(12));
+                    coleta.setAlisarol(cursor.getString(13));
+                    coleta.setBoca(cursor.getString(14));
+                    coleta.setLatitude(cursor.getString(15));
+                    coleta.setLongitude(cursor.getString(16));
+                    coleta.setObs(cursor.getString(17));
+                    coleta.setDatahora(cursor.getString(18));
+                    coleta.setSalvou(cursor.getString(19));
+                    coleta.setPedagio(cursor.getString(20));
+                    objetos.add(coleta);
+                }
+            }
+            db.close();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.e("Problemas", e + "Problema ao ler a tabela");
+        }
+        return objetos;
+    }//FIM ArrayList<ObjetosPojo> envia()
+
+
+
+
+
 
 
 

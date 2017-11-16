@@ -78,7 +78,8 @@ class ListarProdutores : AppCompatActivity() {
             val data = data_sistemaListar
             val ctv = ContentValues()
             ctv.put("_dataColeta", data)
-            val updtade1 = "UPDATE tabela_coleta SET  _dataColeta = '$data_sistemaListar' " //so vai trocar a data dos arquivos que não foram enviados
+           // val updtade1 = "UPDATE  tabela_coleta  SET   _dataColeta = '$data_sistemaListar' "
+            val updtade1 = "UPDATE tabela_coleta SET  _dataColeta = '$data_sistemaListar' WHERE  _confirmaEnvio  = '0' " //so vai trocar a data dos arquivos que não foram enviados
             db.execSQL(updtade1)
             db.close()
 
@@ -89,7 +90,7 @@ class ListarProdutores : AppCompatActivity() {
 
     //update na linha
     fun updateLinha(){
-        banco!!.updateLinhas(label3)// aqui vai escoher apenas a linha faz um update
+        banco!!.updateLinhas(label3,data_sistemaListar)// aqui vai escoher apenas a linha faz um update
     }
 
     //pegar a data do sistema
@@ -131,7 +132,7 @@ class ListarProdutores : AppCompatActivity() {
         db = openOrCreateDatabase("captacao.db", Context.MODE_PRIVATE, null)
 
         try {
-            cursorSpinner = db!!.rawQuery("SELECT _subRota  FROM  tabela_coleta  WHERE   _salvou  <> '2'    GROUP BY  _subRota  ", null);//SELECT PARA PEGAR
+            cursorSpinner = db!!.rawQuery("SELECT _subRota  FROM  tabela_coleta  WHERE   _confirmaEnvio  = '0'    GROUP BY  _subRota  ", null);//SELECT PARA PEGAR
             if (cursorSpinner.moveToFirst()) {
                 do {
                     try {
@@ -154,7 +155,7 @@ class ListarProdutores : AppCompatActivity() {
     fun buscarProdutores() {
         try {
             db = openOrCreateDatabase("captacao.db", Context.MODE_PRIVATE, null)
-            cursor = db!!.rawQuery("SELECT * FROM  tabela_coleta  WHERE   _subRota = '$label3'  AND  _salvou <> '2'  ORDER BY   _nomeProdutor ", null)//SELECT PARA PEGAR SOMENTE O QUE NÃO FOI ENVIADO e  A LINHA ESCOLHIDA PELO SPINNER
+            cursor = db!!.rawQuery("SELECT * FROM  tabela_coleta  WHERE   _subRota = '$label3'  AND  _confirmaEnvio  = '0'  ORDER BY   _nomeProdutor ", null)//SELECT PARA PEGAR SOMENTE O QUE NÃO FOI ENVIADO e  A LINHA ESCOLHIDA PELO SPINNER
         } catch (e: Exception) {
             Toast.makeText(this@ListarProdutores,"ERROR", Toast.LENGTH_LONG).show()
         }
@@ -163,8 +164,8 @@ class ListarProdutores : AppCompatActivity() {
 
     //função para criar a listagem no listview
     fun criarListagem() {
-        val from = arrayOf("_id","_subRota", "_nomeProdutor", "_enderecoProdutor", "_salvou")
-        val to = intArrayOf(R.id.txtId, R.id.txtsuRota, R.id.txtNomeProdutor, R.id.txtendereco, R.id.star)
+        val from = arrayOf("_id","_dataColeta", "_subRota", "_nomeProdutor", "_enderecoProdutor", "_salvou")
+        val to = intArrayOf(R.id.txtId,R.id.txtdata,R.id.txtsuRota, R.id.txtNomeProdutor, R.id.txtendereco, R.id.star)
         try {
             ad = SimpleCursorAdapter(applicationContext, R.layout.itens_produtores, cursor, from, to, 0);
             ad!!.setViewBinder(CustomViewBinder())//chamando este adaptador para acrescentar o check caso o produtor ja foi salvo

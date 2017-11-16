@@ -24,6 +24,16 @@
         android:orientation="vertical"
         android:paddingLeft="10sp">
 
+        <TextView
+            android:id="@+id/txtdata"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="Data:"
+            android:textSize="15sp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textStyle="bold"
+            />
+
 
         <TextView
             android:id="@+id/txtsuRota"

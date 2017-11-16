@@ -39,9 +39,8 @@ class MainActivity : AppCompatActivity() {
     var progress: ProgressDialog? = null
     var banco: DB_Interno? = null
     var contando_registros:Int = 0
-    var jsonEnvia:String = ""
     var enviaDados:Int = 0
-    var km: String? = null//dia 02/01/2017
+    var km: String? = null
     private var broadcastReceiver: BroadcastReceiver? = null
 
 
@@ -100,20 +99,29 @@ class MainActivity : AppCompatActivity() {
 
         //click botão enviar os dados
         btn_enviar_dados.setOnClickListener{
-            alert.setTitle("ATENÇÃO !!!")
-            alert.setMessage("DESEJA ENVIAR OS DADOS ?" )
-            alert.setPositiveButton("ENVIAR", DialogInterface.OnClickListener { dialog, whichButton ->
-                //intent para parar o serviço gps
-                val intent = Intent(this@MainActivity, GPS_Service::class.java)
-                stopService(intent)
+            conexao = TestarConexao().verificaConexao(this)
+            enviaDados = banco!!.enviarDados() //verificar quantos registros tem salvo pra ser enviado
+            if (conexao) {
+                if (enviaDados >0) {
+                    alert.setTitle("ATENÇÃO !!!")
+                    alert.setMessage("DESEJA ENVIAR OS DADOS ?")
+                    alert.setPositiveButton("ENVIAR", DialogInterface.OnClickListener { dialog, whichButton ->
+                        //intent para parar o serviço gps
+                        val intent = Intent(this@MainActivity, GPS_Service::class.java)
+                        stopService(intent)
+                        //intent para chamar a tela enviar dados
+                        val intentdados = Intent(this@MainActivity, EnviarDados::class.java)
+                        startActivity(intentdados)
+                    })
+                    alert.setNegativeButton("CANCELAR") { dialog, which -> }
+                    alert.show()
+                }else{
+                    ToastManager.show(this@MainActivity, "NÃO EXISTE DADOS A SEREM ENVIADOS", ToastManager.INFORMATION)
+                }
 
-                //intent para chamar a tela enviar dados
-                val intentdados = Intent(this@MainActivity, EnviarDados::class.java)
-                startActivity(intentdados)
-
-            })
-            alert.setNegativeButton("CANCELAR") { dialog, which ->  }
-            alert.show()
+            }else{
+                ToastManager.show(this@MainActivity, "SEM CONEXÃO COM INTERNET, VERIFIQUE", ToastManager.INFORMATION)
+            }
         }//FIM DO BOTAO ENVIAR OS DADOS
 
 
@@ -209,8 +217,9 @@ class MainActivity : AppCompatActivity() {
                             coleta.longitude = longitudeJson
                             coleta.obs       = obsJson
                             coleta.datahora = datahoraJson
-                            coleta.salvou   = ""
+                            coleta.salvou   = "0"
                             coleta.pedagio  = ""
+                            coleta.confirmaEnvio = "0"
 
                             //aqui vai salvar no banco
                             //verificar se o arquivo ja foi importado
