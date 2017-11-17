@@ -11,6 +11,7 @@ import android.view.MenuItem
 import br.com.shefa.coletaleite_shefa.BD_Interno.DB_Interno
 import br.com.shefa.coletaleite_shefa.Conexao.TestarConexao
 import br.com.shefa.coletaleite_shefa.ConverteJson.ConverteJson
+import br.com.shefa.coletaleite_shefa.ConverteJson.ConverteJsonKM
 import br.com.shefa.coletaleite_shefa.Toast.ToastManager
 import com.android.volley.Request
 import com.android.volley.RequestQueue
@@ -23,12 +24,14 @@ import java.util.*
 
 class EnviarDados : AppCompatActivity() {
     lateinit var requestQueue: RequestQueue
+    lateinit var requestQueueKm: RequestQueue
     var banco: DB_Interno? = null
     var data:String?=null
     var progress: ProgressDialog? = null
     var conexao:Boolean = false
     var qtd_litros:Double  = 0.0
     var jsonEnvia:String = ""
+    var jsonEnviaKM:String = ""
 
 
 
@@ -52,10 +55,11 @@ class EnviarDados : AppCompatActivity() {
         }
 
 
+        //botão enviar dados
         btn_enviar_dados2.setOnClickListener{
             conexao = TestarConexao().verificaConexao(this)
             if (conexao) {
-                val resposta = banco!!.retornoServ()
+                val resposta = banco!!.retornoServ(data)
                  if(resposta == 0) {
                      enviardados()
                  }else{
@@ -65,7 +69,21 @@ class EnviarDados : AppCompatActivity() {
             } else {
                 ToastManager.show(this@EnviarDados, "SEM CONEXÃO COM INTERNET, VERIFIQUE", ToastManager.INFORMATION)
             }
-        }//fim do botao enviar dados2
+        }//fim do botao enviar dados
+
+
+        btn_envia_km.setOnClickListener{
+            conexao = TestarConexao().verificaConexao(this)
+            if (conexao) {
+                envioKM()
+            } else {
+                ToastManager.show(this@EnviarDados, "SEM CONEXÃO COM INTERNET, VERIFIQUE", ToastManager.INFORMATION)
+            }
+        }//fim do botao enviar dados
+
+
+
+
 
 
 
@@ -89,13 +107,10 @@ class EnviarDados : AppCompatActivity() {
                     if (resposta.equals("Arquivo gerado com sucesso")) {
                         try {
                             Thread.sleep(3000)
-                            val reposta = "3"
-                            alterarContato(reposta)
+                            alterarContato()
+                            envio()
                             progress!!.dismiss()
                             ToastManager.show(this@EnviarDados, " ENVIADO COM SUCESSO" + resposta, ToastManager.INFORMATION)
-                            val intentdados = Intent(this@EnviarDados, MainActivity::class.java)
-                            startActivity(intentdados)
-                            finish()
                         } catch (e: InterruptedException) {
                             e.printStackTrace()
                             progress!!.dismiss()
@@ -125,6 +140,58 @@ class EnviarDados : AppCompatActivity() {
 
 
 
+    //aqui o envio do km
+   private fun envioKM(){
+        progress = ProgressDialog(this);
+        progress!!.setMessage("Enviando por favor aguarde...")
+        progress!!.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress!!.show();//inicio progress
+        val coletaKM = banco!!.enviaKM(data)
+        var jsonkm = ConverteJsonKM().toJson(coletaKM)
+        jsonEnviaKM = jsonkm.toString()
+        requestQueueKm = Volley.newRequestQueue(this)
+        val urlkm = "http://www.shefa-comercial.com.br:8080/coleta/ArquivoGPS/gps.php"
+        val postRequest = object : StringRequest(Request.Method.POST, urlkm,
+                Response.Listener { resposta ->
+                    val site = ""
+                    if (resposta.equals("Arquivo gerado com sucesso")) {
+                        try {
+                            Thread.sleep(3000)
+                            progress!!.dismiss()
+                            deletarKM()
+                            ToastManager.show(this@EnviarDados, " KM ENVIADO COM SUCESSO" + resposta, ToastManager.INFORMATION)
+                            val intentdados = Intent(this@EnviarDados, MainActivity::class.java)
+                            startActivity(intentdados)
+                            finish()
+                        } catch (e: InterruptedException) {
+                            e.printStackTrace()
+                            progress!!.dismiss()
+                        }
+                    } else {
+                        progress!!.dismiss()
+                       // ToastManager.show(this@EnviarDados, "FALHA NA RESPOSTA DO SERVIDOR: " + resposta, ToastManager.INFORMATION)
+                    }
+                },
+                Response.ErrorListener { error ->
+                    progress!!.dismiss()
+                    ToastManager.show(this@EnviarDados, "ATENÇÃO !!! \n FALHA NO ENVIO,POR FAVOR TENTAR NOVAMENTE ", ToastManager.INFORMATION)
+                    error.printStackTrace()
+                }
+        ) {
+            override fun getParams(): Map<String, String> {
+                val params = HashMap<String, String>()
+                // the POST parameters:
+                params.put("site", jsonEnviaKM)
+                return params
+            }
+        }
+        requestQueueKm.add(postRequest)
+        banco!!.close()
+
+    }
+
+
+
     //função DATA E HORA DO SISTEMA
     fun data():String{
         val date = SimpleDateFormat("dd-MM-yyyy")
@@ -138,8 +205,6 @@ class EnviarDados : AppCompatActivity() {
         return datasistema
     }
 
-
-
     //menu voltar
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
@@ -150,20 +215,26 @@ class EnviarDados : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-
-    //altera os dados com status de salvou = 3
-    protected fun alterarContato(resp:String) {
+    //altera os dados com status
+    protected fun alterarContato() {
         val db = openOrCreateDatabase("captacao.db", Context.MODE_PRIVATE, null)
         val  confirmaEnvio = "1"
         val ctv = ContentValues()
         ctv.put("_salvou", confirmaEnvio)
-        ctv.put("_respostaServ", resp)
-
         val updtade1 = "UPDATE  tabela_coleta  SET   _confirmaEnvio = ' $confirmaEnvio' WHERE  _dataColeta = '$data'"
-        val updtade2 = "UPDATE  tabela_coleta  SET   _respostaServ = ' $resp'  WHERE  _dataColeta = '$data' "
         db.execSQL(updtade1)
-        db.execSQL(updtade2)
         db.close()
     }
+
+
+    //função para acrescentar "s" de enviado para não enviar duas vezes
+    fun envio(){
+       val envio = banco!!.resposta(data)
+    }
+
+    fun  deletarKM(){
+        banco!!.deletarKM()
+    }
+
 
 }//fim da Activity

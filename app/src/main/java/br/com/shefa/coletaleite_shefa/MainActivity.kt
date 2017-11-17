@@ -220,13 +220,16 @@ class MainActivity : AppCompatActivity() {
                             coleta.salvou   = "0"
                             coleta.pedagio  = ""
                             coleta.confirmaEnvio = "0"
-                            coleta.respostaServidor = ""
+                            coleta.respostaServidor = "n"
+                            coleta.clickInicio = "n"
+
 
                             //aqui vai salvar no banco
                             //verificar se o arquivo ja foi importado
                             contando_registros = banco!!.contandoregistros(idJson)
                             if (contando_registros == 0) {
                                 banco!!.addColeta(coleta)//inserindo no banco de dados
+
                             } else {
                                 progress!!.dismiss();//encerra progress
                                 ToastManager.show(this@MainActivity, "ATENÇÃO!!! \n ARQUIVO JA IMPORTADO", ToastManager.WARNING)

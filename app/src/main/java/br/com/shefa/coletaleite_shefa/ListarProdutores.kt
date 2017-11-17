@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import br.com.shefa.coletaleite_shefa.BD_Interno.DB_Interno
 import br.com.shefa.coletaleite_shefa.Gps.GPS_Service
+import br.com.shefa.coletaleite_shefa.Objetos.ObjetosPojo
 import br.com.shefa.coletaleite_shefa.Toast.ToastManager
 import kotlinx.android.synthetic.main.activity_listar_produtores.*
 import java.text.SimpleDateFormat
@@ -33,6 +34,8 @@ class ListarProdutores : AppCompatActivity() {
     var banco: DB_Interno? = null
     var imei:String? = null
     var data_sistemaListar:String? = null
+    var inicio:Int = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,12 +46,20 @@ class ListarProdutores : AppCompatActivity() {
         val alert = AlertDialog.Builder(this)
         imei =   getIntent().getStringExtra("imei");
         data()
+        inicio = banco!!.inicio()
+
+        if (inicio >0){
+            listView.setEnabled(false)
+        }else{
+            btn_inicio.setEnabled(false)
+        }
 
         btn_inicio.setOnClickListener{
             alert.setTitle("ATENÇÃO !!!")
             alert.setMessage("DESEJA INICIAR A " + label3 + " ?" )
             alert.setPositiveButton("INICIAR", DialogInterface.OnClickListener { dialog, whichButton ->
-                 alterarData()//altera data se for de dias diferentes
+                 val iniciar ="s"
+                 alterarData(iniciar)//altera data se for de dias diferentes
                  updateLinha()
                  atualizandoGPS()
                  onRestart()
@@ -72,15 +83,16 @@ class ListarProdutores : AppCompatActivity() {
 
 
     //altera a data do registro se for clicado quando o arquivo é de outro dia
-    fun alterarData() {
+    fun alterarData(inici:String) {
         val db = openOrCreateDatabase("captacao.db", Context.MODE_PRIVATE, null)
         try {
             val data = data_sistemaListar
             val ctv = ContentValues()
             ctv.put("_dataColeta", data)
-           // val updtade1 = "UPDATE  tabela_coleta  SET   _dataColeta = '$data_sistemaListar' "
-            val updtade1 = "UPDATE tabela_coleta SET  _dataColeta = '$data_sistemaListar' WHERE  _confirmaEnvio  = '0' " //so vai trocar a data dos arquivos que não foram enviados
+            val updtade2 = "UPDATE  tabela_coleta  SET   _clickinicio  = '$inici' "
+            val updtade1 = "UPDATE  tabela_coleta  SET   _dataColeta   = '$data_sistemaListar'  WHERE   _confirmaEnvio  = '0' "
             db.execSQL(updtade1)
+            db.execSQL(updtade2)
             db.close()
 
         } catch (e: Exception) {
@@ -88,9 +100,23 @@ class ListarProdutores : AppCompatActivity() {
         }
     }
 
-    //update na linha
+    //update na linha e km
     fun updateLinha(){
         banco!!.updateLinhas(label3,data_sistemaListar)// aqui vai escoher apenas a linha faz um update
+        //variaveis para o km
+        val  idt   = banco!!.buscaIdt(data_sistemaListar)
+        val rotakm = banco!!.buscarota(data_sistemaListar)
+
+        val coletakm = ObjetosPojo()
+        coletakm.idprimary = 1
+        coletakm.idlinha = idt
+        coletakm.datakm  = data_sistemaListar
+        coletakm.rotaKM  = rotakm
+        coletakm.subRotaKM = label3
+        coletakm.imeiKM    = imei
+        coletakm.qtdKM     = "0"
+        banco!!.addTabelaKM(coletakm)//inserindo no banco de dados
+
     }
 
     //pegar a data do sistema
@@ -148,6 +174,9 @@ class ListarProdutores : AppCompatActivity() {
         }catch (e: Exception){
             ToastManager.show(this@ListarProdutores, "FAVOR IMPORTAR AS LINHAS", ToastManager.INFORMATION)
         }
+           if (labels.size <=0){
+            ToastManager.show(this@ListarProdutores, "FAVOR IMPORTAR AS LINHAS", ToastManager.INFORMATION)
+            }
         return labels
     }// fim subRotaLinhas
 

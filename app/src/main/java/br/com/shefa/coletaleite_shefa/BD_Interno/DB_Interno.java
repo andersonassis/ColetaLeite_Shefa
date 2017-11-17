@@ -24,7 +24,7 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     private static final String DB_NAME            = "captacao.db";
     private static final String TABLE_NAME         = "tabela_coleta";
     private static final String ID                 = "_id";//id do ax e banco
-    private static final String ID2                = "_id2";//id da coleta
+    private static final String ID2                = "_idt";//id da coleta
     private static final String DATACOLETA         = "_dataColeta";
     private static final String ROTA               = "_rota";
     private static final String SUBROTA            = "_subRota";
@@ -45,10 +45,12 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     private static final String SALVOU             = "_salvou";
     private static final String PEDAGIO            = "_pedagio";
     private static final String CONFIRMA_ENVIO     = "_confirmaEnvio";
+    private static final String CLICK_INICIO       = "_clickinicio";
     private static final String RESPOSTA_SERVIDOR  = "_respostaServ";
 
     //VARIAVEIS DA TABELA DO KM
     private static final String TABLE_NAME_KM       = "somakm";
+    private static final String IDKM_PRI            = "_idp";//id PRIMARY KEY
     private static final String IDKM                = "_idkm";//id
     private static final String DATAKM              = "_datakm";
     private static final String ROTAKM              = "_rotakm";
@@ -61,10 +63,10 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     //criando a tabela que vai conter os dados em geral
     String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" + ID + " INTEGER PRIMARY KEY," + ID2 + " TEXT, " + DATACOLETA + " TEXT," + ROTA + " TEXT," + SUBROTA + " TEXT," + CODTRANSPORTADORA + " TEXT, " + COD_PRODUTOR + " TEXT," + NOME_PRODUTOR + " TEXT,"
             + ENDERECO_PRODUTOR + " TEXT," + CIDADE + " TEXT," + QTD +" TEXT, "+ IMEI + " TEXT," + TEMPERATURA +" TEXT, " + ALISAROL + " TEXT, " + BOCA + " TEXT, "  + LATITUDE + " REAL," + LONGITUDE + " REAL,"
-            + OBS + " CHAR(150)," + DATAHORA + " TEXT," + SALVOU + " TEXT," + PEDAGIO + " TEXT, "+CONFIRMA_ENVIO +" TEXT, "+RESPOSTA_SERVIDOR+" TEXT  )";
+            + OBS + " CHAR(150)," + DATAHORA + " TEXT," + SALVOU + " TEXT," + PEDAGIO + " TEXT, "+CONFIRMA_ENVIO +" TEXT, " +CLICK_INICIO+" CHAR(1), "+RESPOSTA_SERVIDOR+" CHAR(1)  )";
 
 
-    String CREATE_TABLEKM = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_KM + " (" + IDKM + " INTEGER PRIMARY KEY, " + DATAKM +" TEXT, " + ROTAKM +" TEXT, "  + SUBROTAKM + " TEXT, " + IMEIKM + " TEXT, " + QTDKM + " TEXT  )";
+    String CREATE_TABLEKM = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_KM + " (" + IDKM_PRI + " INTEGER PRIMARY KEY, "  + IDKM+" TEXT,"  + DATAKM +" TEXT, " + ROTAKM +" TEXT, "  + SUBROTAKM + " TEXT, " + IMEIKM + " TEXT, " + QTDKM + " TEXT  )";
 
 
     String DROP_TABLE  = "DROP TABLE IF EXISTS " + TABLE_NAME;
@@ -118,6 +120,7 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
             values.put(SALVOU,objetos.getSalvou());
             values.put(PEDAGIO,objetos.getPedagio());
             values.put(CONFIRMA_ENVIO,objetos.getConfirmaEnvio());
+            values.put(CLICK_INICIO,objetos.getClickInicio());
             values.put(RESPOSTA_SERVIDOR,objetos.getRespostaServidor());
             db.insert(TABLE_NAME, null, values);
             db.close();
@@ -162,7 +165,8 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
                     coleta.setSalvou(cursor.getString(19));
                     coleta.setPedagio(cursor.getString(20));
                     coleta.setConfirmaEnvio(cursor.getString(21));
-                    coleta.setRespostaServidor(cursor.getString(22));
+                    coleta.setClickInicio(cursor.getString(22));
+                    coleta.setRespostaServidor(cursor.getString(23));
 
                     objetos.add(coleta);
                 }
@@ -187,6 +191,26 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
         }
         return "";
     }//fim deletar
+
+
+    // funçao para contar quantos registros tem no banco
+    public int inicio(){
+        int num = 0;
+        String click = "n";
+        SQLiteDatabase db = this.getReadableDatabase();
+        try {
+            String QUERY = "SELECT * FROM " + TABLE_NAME + "  WHERE    _clickinicio   = '" + click + "'  ";
+            Cursor cursor = db.rawQuery(QUERY, null);
+            num = cursor.getCount();
+            db.close();
+            return num;
+        } catch (Exception e) {
+            Log.e("ERRO", e + "");
+        }
+        return 0;
+    }//fim do contandoregistros
+
+
 
 
     // funçao para contar quantos registros tem no banco
@@ -269,6 +293,9 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     }
 
 
+
+
+
     //update na linhas
     public void updateLinhas(String Linha, String data){
         SQLiteDatabase db = this.getReadableDatabase();
@@ -280,6 +307,21 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
             String QUERY2 = (updtade2);
             db2.execSQL(QUERY1 );
             db2.execSQL(QUERY2 );
+            db2.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public void resposta(String data){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String updtade = "UPDATE  tabela_coleta  SET   _respostaServ = 's'   WHERE   _dataColeta = '" + data + "'  ";
+        try {
+            SQLiteDatabase db2 = this.getWritableDatabase();
+            String QUERY1 = (updtade);
+            db2.execSQL(QUERY1 );
             db2.close();
         }catch (Exception e){
             e.printStackTrace();
@@ -350,11 +392,11 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
 
 
 
-    public int retornoServ(){
+    public int retornoServ(String data){
         int numero =0;
         SQLiteDatabase db = this.getReadableDatabase();
         try {
-            String QUERY = "SELECT * FROM  " + TABLE_NAME + "  WHERE   _respostaServ  = '3'  ";
+            String QUERY = "SELECT * FROM  " + TABLE_NAME + "  WHERE   _respostaServ  = 's'  AND  _dataColeta  =  '" +data+ "' ";
             Cursor cursor = db.rawQuery(QUERY, null);
             numero = cursor.getCount();
             db.close();
@@ -427,6 +469,7 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
         SQLiteDatabase db = this.getWritableDatabase();
         try {
             ContentValues values = new ContentValues();
+            values.put(IDKM_PRI, objetos.getIdprimary());
             values.put(IDKM, objetos.getIdlinha());
             values.put(DATAKM, objetos.getDatakm());
             values.put(ROTAKM, objetos.getRotaKM());
@@ -443,7 +486,6 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
 
     }
 
-
     @NotNull
     @Override  //buscar
     public ArrayList<ObjetosPojo> getTabelaKM() {
@@ -456,11 +498,12 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
             if (!cursor.isLast()) {
                 while (cursor.moveToNext()) {
                     ObjetosPojo coleta = new ObjetosPojo();
-                    coleta.setIdlinha(cursor.getString(0));
-                    coleta.setDatakm(cursor.getString(1));
-                    coleta.setSubRotaKM(cursor.getString(2));
-                    coleta.setImeiKM(cursor.getString(3));
-                    coleta.setQtdKM(cursor.getString(4));
+                    coleta.setIdprimary(cursor.getInt(0));
+                    coleta.setIdlinha(cursor.getString(1));
+                    coleta.setDatakm(cursor.getString(2));
+                    coleta.setSubRotaKM(cursor.getString(3));
+                    coleta.setImeiKM(cursor.getString(4));
+                    coleta.setQtdKM(cursor.getString(5));
                     objetos.add(coleta);
                 }
             }
@@ -471,5 +514,51 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
         }
         return objetos;
     }
+
+
+    //metodo para buscar a tabela km
+    public ArrayList<ObjetosPojo> enviaKM(String data) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<ObjetosPojo> objetos = null;
+        try {
+            objetos = new ArrayList<ObjetosPojo>();
+            String QUERY = "SELECT * FROM " + TABLE_NAME_KM + " WHERE   _datakm  =  '" + data + "' ";
+            Cursor cursor = db.rawQuery(QUERY, null);
+            if (!cursor.isLast()) {
+                while (cursor.moveToNext()) {
+                    ObjetosPojo coleta = new ObjetosPojo();
+                    coleta.setIdprimary(cursor.getInt(0));
+                    coleta.setIdlinha(cursor.getString(1));
+                    coleta.setDatakm(cursor.getString(2));
+                    coleta.setRotaKM(cursor.getString(3));
+                    coleta.setSubRotaKM(cursor.getString(4));
+                    coleta.setImeiKM(cursor.getString(5));
+                    coleta.setQtdKM(cursor.getString(6));
+                    objetos.add(coleta);
+                }
+            }
+            db.close();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.e("Problemas", e + "Problema ao ler a tabela");
+        }
+        return objetos;
+    }
+
+
+    //funcao deletar
+    public String deletarKM(){
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            String QUERY = ("DELETE  FROM " + TABLE_NAME_KM);
+            db.execSQL(QUERY );
+            db.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return "";
+    }//fim deletar
+
+
 
 }//fim da classe

@@ -15,7 +15,7 @@ class ConverteJson  {
             jsonStringer.`object`().key("coletas").array()
             for (coletaPojo in listaColetas) {
                 jsonStringer.`object`()
-                        .key("_id2").value(coletaPojo.id2)
+                        .key("_idt").value(coletaPojo.id2)
                         .key("_dataColeta").value(coletaPojo.dataColeta)
                         .key("_rota").value(coletaPojo.rota)
                         .key("_subRota").value(coletaPojo.subRota)

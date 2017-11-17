@@ -103,7 +103,7 @@ public class GPS_Service extends Service {
             return;
         }
         if (locationManager!=null) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 100, listener);  // A CADA 5 SEGUNDOS E 100 MTS ATUALIZA
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 100, listener);  // A CADA 0 SEGUNDOS E 100 MTS ATUALIZA
         }else{
             ToastManager.show(this, "SEM SINAL DE GPS", ToastManager.INFORMATION);
         }
@@ -114,7 +114,7 @@ public class GPS_Service extends Service {
     public void banco(Double distancia) {//metodo para inserir no banco de dados tabela 2
         SQLiteDatabase db = openOrCreateDatabase("captacao.db", Context.MODE_PRIVATE, null);
         // recebendo  a data e hora do sistema
-        SimpleDateFormat datehr = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");// dia mes ano - hora minuto segundo
+        SimpleDateFormat datehr = new SimpleDateFormat("dd-MM-yyyy");// dia mes ano - hora minuto segundo
         final Date datahr = new Date();
         Calendar calhr = Calendar.getInstance();
         calhr.setTime(datahr);
@@ -132,25 +132,19 @@ public class GPS_Service extends Service {
         distanciaFinal = Double.valueOf(ss);
         distKM = 0.0;
 
-        idt     = banco.buscaIdt(data_sistema);
+       /* idt     = banco.buscaIdt(data_sistema);
         linhakm = banco.buscaLinha(data_sistema);
-        rotakm  = banco.buscarota(data_sistema);
-        String id = idt;
-        String dthora = data_sistemahr;
-        String rotas  = rotakm;
-        String linhas = linhakm;
-        String qtddkm = String.valueOf(distanciaFinal);
+        rotakm  = banco.buscarota(data_sistema);*/
+       try {
+           String qtddkm = String.valueOf(distanciaFinal);
+           String updtade1 = "UPDATE  somakm  SET  _qtdkm = ' " + qtddkm + "'  WHERE  _datakm  = '" + data_sistema + "'";
+           db.execSQL(updtade1);
+           db.close();
 
+       }catch(Exception e){
 
-
-        ContentValues ctv = new ContentValues();
-        ctv.put("_datakm", dthora);
-        ctv.put("_rotakm", rotas);
-        ctv.put("_subRotakm", linhas);
-        ctv.put("_imeikm", "");
-        ctv.put("_qtdkm",qtddkm );
-        int res = db.update("somakm", ctv, "_idkm=?", new String[]{id});
-        db.close();
+           Toast.makeText(GPS_Service.this, "ERRO AO SALVAR KM :", Toast.LENGTH_SHORT).show();
+       }
 
 
         Intent i = new Intent("location_update");
