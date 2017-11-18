@@ -47,9 +47,6 @@ public class GPS_Service extends Service {
     double LongAnte = 0.0;
     double distancia = 0.0;
     double distanciaFinal = 0.0;
-    String linhakm;
-    String rotakm;
-
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -103,7 +100,7 @@ public class GPS_Service extends Service {
             return;
         }
         if (locationManager!=null) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 100, listener);  // A CADA 0 SEGUNDOS E 100 MTS ATUALIZA
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 5, listener);  // A CADA 0 SEGUNDOS E 0 MTS ATUALIZA
         }else{
             ToastManager.show(this, "SEM SINAL DE GPS", ToastManager.INFORMATION);
         }
@@ -132,9 +129,6 @@ public class GPS_Service extends Service {
         distanciaFinal = Double.valueOf(ss);
         distKM = 0.0;
 
-       /* idt     = banco.buscaIdt(data_sistema);
-        linhakm = banco.buscaLinha(data_sistema);
-        rotakm  = banco.buscarota(data_sistema);*/
        try {
            String qtddkm = String.valueOf(distanciaFinal);
            String updtade1 = "UPDATE  somakm  SET  _qtdkm = ' " + qtddkm + "'  WHERE  _datakm  = '" + data_sistema + "'";

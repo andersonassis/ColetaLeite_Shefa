@@ -10,15 +10,12 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.telephony.TelephonyManager
 import android.util.Log
-import android.widget.TextView
 import br.com.shefa.coletaleite_shefa.BD_Interno.DB_Interno
 import br.com.shefa.coletaleite_shefa.Conexao.TestarConexao
 import br.com.shefa.coletaleite_shefa.Gps.GPS_Service
 import br.com.shefa.coletaleite_shefa.Gps.Gps
 import br.com.shefa.coletaleite_shefa.Objetos.ObjetosPojo
 import br.com.shefa.coletaleite_shefa.Permissoes.PermissionUtils
-import br.com.shefa.coletaleite_shefa.R.id.btn_coleta_extra
-import br.com.shefa.coletaleite_shefa.R.id.kmtext
 import br.com.shefa.coletaleite_shefa.Toast.ToastManager
 import com.android.volley.Request
 import com.android.volley.RequestQueue
@@ -123,12 +120,6 @@ class MainActivity : AppCompatActivity() {
                 ToastManager.show(this@MainActivity, "SEM CONEXÃO COM INTERNET, VERIFIQUE", ToastManager.INFORMATION)
             }
         }//FIM DO BOTAO ENVIAR OS DADOS
-
-
-        //click botão coleta extra
-        btn_coleta_extra.setOnClickListener{
-
-        }
 
 
     }//fim do oncreate

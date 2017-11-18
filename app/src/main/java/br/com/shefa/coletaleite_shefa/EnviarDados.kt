@@ -81,12 +81,6 @@ class EnviarDados : AppCompatActivity() {
             }
         }//fim do botao enviar dados
 
-
-
-
-
-
-
     }// fim do oncreate
 
     private fun enviardados() {
@@ -103,7 +97,6 @@ class EnviarDados : AppCompatActivity() {
         val url = "http://www.shefa-comercial.com.br:8080/coleta/ArquivoRecebimento/coleta.php"
         val postRequest = object : StringRequest(Request.Method.POST, url,
                 Response.Listener { resposta ->
-                    val site = ""
                     if (resposta.equals("Arquivo gerado com sucesso")) {
                         try {
                             Thread.sleep(3000)
@@ -153,7 +146,6 @@ class EnviarDados : AppCompatActivity() {
         val urlkm = "http://www.shefa-comercial.com.br:8080/coleta/ArquivoGPS/gps.php"
         val postRequest = object : StringRequest(Request.Method.POST, urlkm,
                 Response.Listener { resposta ->
-                    val site = ""
                     if (resposta.equals("Arquivo gerado com sucesso")) {
                         try {
                             Thread.sleep(3000)

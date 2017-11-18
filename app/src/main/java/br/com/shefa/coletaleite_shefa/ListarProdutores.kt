@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.widget.SimpleCursorAdapter
 import android.support.v7.app.AlertDialog
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
@@ -234,6 +235,12 @@ class ListarProdutores : AppCompatActivity() {
         }
     }//fim CustomViewBinder
 
+    // INICIO DOS MENUS QUE INCLUI O BOTÃO SAIR
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
 
     //menu voltar
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -242,6 +249,16 @@ class ListarProdutores : AppCompatActivity() {
             onBackPressed()
             return true
         }
+
+        if (id == R.id.coleta_extra) { // CLICK DO COLETA EXTRA
+          /*  val intent = Intent(applicationContext, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
+            finish()*/
+            return true
+        }
+
+
         return super.onOptionsItemSelected(item)
     }
 
