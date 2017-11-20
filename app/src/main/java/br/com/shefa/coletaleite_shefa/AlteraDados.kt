@@ -12,6 +12,7 @@ import android.support.v7.app.AlertDialog
 import android.view.MenuItem
 import android.widget.RadioGroup
 import br.com.shefa.coletaleite_shefa.BD_Interno.DB_Interno
+import br.com.shefa.coletaleite_shefa.Datas.Datas
 import br.com.shefa.coletaleite_shefa.Gps.GPS_Service
 import br.com.shefa.coletaleite_shefa.Gps.Gps
 import br.com.shefa.coletaleite_shefa.R.id.radioGrupo
@@ -21,7 +22,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class AlteraDados : AppCompatActivity() {
-    var db: SQLiteDatabase? = null
     var banco: DB_Interno? = null
     var data_sistemahora:String? = null
     var id_produtor:String  = ""
@@ -29,6 +29,7 @@ class AlteraDados : AppCompatActivity() {
     var salvou:String? = null
     var latitude:String? = null
     var longitude:String? = null
+    var datas : Datas? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,9 +38,11 @@ class AlteraDados : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.title = "Voltar"
         banco = DB_Interno(this)//chama o banco
+        datas = Datas()//chama as datas
+
         id_produtor =  getIntent().getStringExtra("id_Produtor");
         buscarProdutor(id_produtor)
-        data_sistemahora =  datahora()
+        data_sistemahora =  datas!!.dataHora() //data e hora
 
         //radio grupo
         radioGrupo.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { radioGrupo, checkedId ->
@@ -168,19 +171,6 @@ class AlteraDados : AppCompatActivity() {
               ToastManager.show(this@AlteraDados, "SEM SINAL DE GPS", ToastManager.INFORMATION)
           }
       }
-
-
-    private fun datahora():String {
-        //DATA E HORA DO SISTEMA
-        val date = SimpleDateFormat("dd-MM-yyyy HH:mm:ss")
-        val data = Date()
-        val cal = Calendar.getInstance()
-        cal.time = data
-        val data_atual = cal.time
-        val data_sistema2 = date.format(data_atual)
-        val dataHora = data_sistema2
-        return dataHora
-    }
 
 
     //menu voltar

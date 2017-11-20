@@ -18,6 +18,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import br.com.shefa.coletaleite_shefa.BD_Interno.DB_Interno
+import br.com.shefa.coletaleite_shefa.Datas.Datas
 import br.com.shefa.coletaleite_shefa.Gps.GPS_Service
 import br.com.shefa.coletaleite_shefa.Objetos.ObjetosPojo
 import br.com.shefa.coletaleite_shefa.Toast.ToastManager
@@ -36,6 +37,7 @@ class ListarProdutores : AppCompatActivity() {
     var imei:String? = null
     var data_sistemaListar:String? = null
     var inicio:Int = 0
+    var data : Datas? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,9 +46,10 @@ class ListarProdutores : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.title = "Voltar"
         banco = DB_Interno(this)//chama o banco
+        data  = Datas()//chama as datas
         val alert = AlertDialog.Builder(this)
         imei =   getIntent().getStringExtra("imei");
-        data()
+        data_sistemaListar = data!!.data()
         inicio = banco!!.inicio()
 
         if (inicio >0){
@@ -118,18 +121,6 @@ class ListarProdutores : AppCompatActivity() {
         coletakm.qtdKM     = "0"
         banco!!.addTabelaKM(coletakm)//inserindo no banco de dados
 
-    }
-
-    //pegar a data do sistema
-    fun data(){
-        //recebendo  a data do sistema atual
-        val date = SimpleDateFormat("dd-MM-yyyy")
-        val data = Date()
-        val cal = Calendar.getInstance()
-        cal.time = data
-        val data_atual = cal.time
-        val data_sistema2 = date.format(data_atual)
-        data_sistemaListar = data_sistema2
     }
 
 
@@ -251,10 +242,9 @@ class ListarProdutores : AppCompatActivity() {
         }
 
         if (id == R.id.coleta_extra) { // CLICK DO COLETA EXTRA
-          /*  val intent = Intent(applicationContext, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            val intent = Intent(applicationContext, ColetaExtra::class.java)
             startActivity(intent)
-            finish()*/
+            finish()
             return true
         }
 

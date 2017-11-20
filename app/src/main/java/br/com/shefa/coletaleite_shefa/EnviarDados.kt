@@ -12,6 +12,7 @@ import br.com.shefa.coletaleite_shefa.BD_Interno.DB_Interno
 import br.com.shefa.coletaleite_shefa.Conexao.TestarConexao
 import br.com.shefa.coletaleite_shefa.ConverteJson.ConverteJson
 import br.com.shefa.coletaleite_shefa.ConverteJson.ConverteJsonKM
+import br.com.shefa.coletaleite_shefa.Datas.Datas
 import br.com.shefa.coletaleite_shefa.Toast.ToastManager
 import com.android.volley.Request
 import com.android.volley.RequestQueue
@@ -26,6 +27,7 @@ class EnviarDados : AppCompatActivity() {
     lateinit var requestQueue: RequestQueue
     lateinit var requestQueueKm: RequestQueue
     var banco: DB_Interno? = null
+    var datasistema : Datas? = null
     var data:String?=null
     var progress: ProgressDialog? = null
     var conexao:Boolean = false
@@ -41,7 +43,10 @@ class EnviarDados : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.title = "Voltar"
         banco = DB_Interno(this)//chama o banco
-        data=   data()
+        datasistema = Datas()
+
+        data =  datasistema!!.data()//data do sistema
+
 
         //somando a quantidade de litros
         qtd_litros = banco!!.qtdLitros(data)
@@ -183,19 +188,6 @@ class EnviarDados : AppCompatActivity() {
     }
 
 
-
-    //função DATA E HORA DO SISTEMA
-    fun data():String{
-        val date = SimpleDateFormat("dd-MM-yyyy")
-        val data = Date()
-        val cal = Calendar.getInstance()
-        cal.time = data
-        val data_atual = cal.time
-        val data_sistema2 = date.format(data_atual)
-        var datasistema = data_sistema2
-
-        return datasistema
-    }
 
     //menu voltar
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
