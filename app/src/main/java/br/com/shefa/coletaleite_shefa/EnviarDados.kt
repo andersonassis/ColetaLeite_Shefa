@@ -27,13 +27,15 @@ class EnviarDados : AppCompatActivity() {
     lateinit var requestQueue: RequestQueue
     lateinit var requestQueueKm: RequestQueue
     var banco: DB_Interno? = null
-    var datasistema : Datas? = null
-    var data:String?=null
+    var datas: Datas? = null
     var progress: ProgressDialog? = null
     var conexao:Boolean = false
     var qtd_litros:Double  = 0.0
     var jsonEnvia:String = ""
     var jsonEnviaKM:String = ""
+    var data:String = ""
+    var envioKm:Int = 0
+    var data_deletar:String = ""
 
 
 
@@ -43,9 +45,9 @@ class EnviarDados : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.title = "Voltar"
         banco = DB_Interno(this)//chama o banco
-        datasistema = Datas()
-
-        data =  datasistema!!.data()//data do sistema
+        datas = Datas()//chama a classe datas
+        data = datas!!.data()
+        data_deletar = datas!!.dataMenosUm()
 
 
         //somando a quantidade de litros
@@ -79,15 +81,22 @@ class EnviarDados : AppCompatActivity() {
 
         btn_envia_km.setOnClickListener{
             conexao = TestarConexao().verificaConexao(this)
+            envioKm = banco!!.verificaKM()
             if (conexao) {
-                envioKM()
+                if (envioKm >0) {
+                    envioKM()
+                }else{
+                    ToastManager.show(this@EnviarDados, "NÃO EXISTE ARQUIVO DE KM A SER ENVIADO", ToastManager.INFORMATION)
+                }
             } else {
                 ToastManager.show(this@EnviarDados, "SEM CONEXÃO COM INTERNET, VERIFIQUE", ToastManager.INFORMATION)
             }
         }//fim do botao enviar dados
 
+
     }// fim do oncreate
 
+    //FUNÇÃO PARA ENVIAR OS DADOS (TABELA COLETA)
     private fun enviardados() {
         progress = ProgressDialog(this);
         progress!!.setMessage("Enviando por favor aguarde...")
@@ -102,21 +111,17 @@ class EnviarDados : AppCompatActivity() {
         val url = "http://www.shefa-comercial.com.br:8080/coleta/ArquivoRecebimento/coleta.php"
         val postRequest = object : StringRequest(Request.Method.POST, url,
                 Response.Listener { resposta ->
-                    if (resposta.equals("Arquivo gerado com sucesso")) {
                         try {
                             Thread.sleep(3000)
                             alterarContato()
                             envio()
+                            banco!!.deletar(data_deletar)//deleta o arquivo do dia anterior a do sistema
                             progress!!.dismiss()
-                            ToastManager.show(this@EnviarDados, " ENVIADO COM SUCESSO" + resposta, ToastManager.INFORMATION)
+                            ToastManager.show(this@EnviarDados, " ENVIADO COM SUCESSO", ToastManager.INFORMATION)
                         } catch (e: InterruptedException) {
                             e.printStackTrace()
                             progress!!.dismiss()
                         }
-                    } else {
-                        progress!!.dismiss()
-                        ToastManager.show(this@EnviarDados, "FALHA NA RESPOSTA DO SERVIDOR: " + resposta, ToastManager.INFORMATION)
-                    }
                 },
                 Response.ErrorListener { error ->
                     progress!!.dismiss()
@@ -138,7 +143,7 @@ class EnviarDados : AppCompatActivity() {
 
 
 
-    //aqui o envio do km
+    //FUNÇÃO PARA O ENVIO DO KM(TABELA DE KM)
    private fun envioKM(){
         progress = ProgressDialog(this);
         progress!!.setMessage("Enviando por favor aguarde...")
@@ -151,12 +156,11 @@ class EnviarDados : AppCompatActivity() {
         val urlkm = "http://www.shefa-comercial.com.br:8080/coleta/ArquivoGPS/gps.php"
         val postRequest = object : StringRequest(Request.Method.POST, urlkm,
                 Response.Listener { resposta ->
-                    if (resposta.equals("Arquivo gerado com sucesso")) {
                         try {
                             Thread.sleep(3000)
                             progress!!.dismiss()
                             deletarKM()
-                            ToastManager.show(this@EnviarDados, " KM ENVIADO COM SUCESSO" + resposta, ToastManager.INFORMATION)
+                            ToastManager.show(this@EnviarDados, " KM ENVIADO COM SUCESSO", ToastManager.INFORMATION)
                             val intentdados = Intent(this@EnviarDados, MainActivity::class.java)
                             startActivity(intentdados)
                             finish()
@@ -164,10 +168,6 @@ class EnviarDados : AppCompatActivity() {
                             e.printStackTrace()
                             progress!!.dismiss()
                         }
-                    } else {
-                        progress!!.dismiss()
-                       // ToastManager.show(this@EnviarDados, "FALHA NA RESPOSTA DO SERVIDOR: " + resposta, ToastManager.INFORMATION)
-                    }
                 },
                 Response.ErrorListener { error ->
                     progress!!.dismiss()
@@ -188,8 +188,7 @@ class EnviarDados : AppCompatActivity() {
     }
 
 
-
-    //menu voltar
+    //FUNÇÃO DO MENU VOLTAR
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         if (id == android.R.id.home) {
@@ -213,7 +212,7 @@ class EnviarDados : AppCompatActivity() {
 
     //função para acrescentar "s" de enviado para não enviar duas vezes
     fun envio(){
-       val envio = banco!!.resposta(data)
+       banco!!.resposta(data)
     }
 
     fun  deletarKM(){

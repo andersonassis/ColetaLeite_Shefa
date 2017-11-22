@@ -30,6 +30,7 @@ class AlteraDados : AppCompatActivity() {
     var latitude:String? = null
     var longitude:String? = null
     var datas : Datas? = null
+    var peda:String?=null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,7 +110,8 @@ class AlteraDados : AppCompatActivity() {
              val alisarol = c.getString(c.getColumnIndex("_alisarol"))
              val obs = c.getString(c.getColumnIndex("_obs"))
              val boca2 = c.getString(c.getColumnIndex("_boca"))
-             val peda  = c.getString(c.getColumnIndex("_pedagio"))
+             peda      = c.getString(c.getColumnIndex("_pedagio"))
+
 
              txt_nomeProdutor.setText(nomeProdutor.toString())
              edit_qtd.setText(qtd.toString())

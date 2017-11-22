@@ -49,8 +49,8 @@ class ListarProdutores : AppCompatActivity() {
         data  = Datas()//chama as datas
         val alert = AlertDialog.Builder(this)
         imei =   getIntent().getStringExtra("imei");
-        data_sistemaListar = data!!.data()
-        inicio = banco!!.inicio()
+        data_sistemaListar = data!!.data()//DATA DO SISTEMA
+        inicio = banco!!.inicio()// funçao para contar quantos registros tem no banco
 
         if (inicio >0){
             listView.setEnabled(false)
@@ -63,7 +63,7 @@ class ListarProdutores : AppCompatActivity() {
             alert.setMessage("DESEJA INICIAR A " + label3 + " ?" )
             alert.setPositiveButton("INICIAR", DialogInterface.OnClickListener { dialog, whichButton ->
                  val iniciar ="s"
-                 alterarData(iniciar)//altera data se for de dias diferentes
+                 alterarData(iniciar)//altera data se for de dias diferentes e coloca um s no click do botão iniciar
                  updateLinha()
                  atualizandoGPS()
                  onRestart()
@@ -242,10 +242,16 @@ class ListarProdutores : AppCompatActivity() {
         }
 
         if (id == R.id.coleta_extra) { // CLICK DO COLETA EXTRA
-            val intent = Intent(applicationContext, ColetaExtra::class.java)
-            startActivity(intent)
-            finish()
-            return true
+            if (inicio > 0)  {
+                ToastManager.show(this@ListarProdutores, "POR FAVOR INICIAR A LINHA", ToastManager.INFORMATION)
+
+            }else{
+                val intent = Intent(applicationContext, ColetaExtra::class.java)
+                intent.putExtra("linha", label3)
+                startActivity(intent)
+                finish()
+                return true
+            }
         }
 
 

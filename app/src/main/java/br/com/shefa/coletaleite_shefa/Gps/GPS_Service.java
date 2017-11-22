@@ -100,7 +100,7 @@ public class GPS_Service extends Service {
             return;
         }
         if (locationManager!=null) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 5, listener);  // A CADA 0 SEGUNDOS E 0 MTS ATUALIZA
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);  // A CADA 0 SEGUNDOS E 0 MTS ATUALIZA
         }else{
             ToastManager.show(this, "SEM SINAL DE GPS", ToastManager.INFORMATION);
         }

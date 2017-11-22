@@ -7,7 +7,7 @@ import java.util.*
  * Created by AndersonLuis on 20/11/2017.
  */
 class Datas  {
-    //função DATA DO SISTEMA
+    //FUNÇÃO PARA PEGAR A  DATA DO SISTEMA
     fun data():String{
         val date = SimpleDateFormat("dd-MM-yyyy")
         val data = Date()
@@ -20,7 +20,7 @@ class Datas  {
     }
 
 
-    //data -1 dia
+    //FUNÇÃO PARA PEGAR A DATA DE UM DIA ANTES
     fun dataMenosUm():String{
         //  Pegando a data do dia anterior da data atual
         val datas = Calendar.getInstance()
@@ -32,7 +32,7 @@ class Datas  {
     }
 
 
-    //data e hora do sistema
+    //FUNÇÃO PARA PEGAR A DATA E HORA
     fun dataHora():String{
         val date = SimpleDateFormat("dd-MM-yyyy HH:mm:ss")
         val data = Date()

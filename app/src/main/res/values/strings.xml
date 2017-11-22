@@ -14,5 +14,26 @@
     <string name="title_activity_mapa_produtor">Mapa</string>
     <string name="btn_iniciar">INICIAR</string>
     <string name="btn_coleta_extra">Iniciar uma Coleta Extra</string>
+    <string name="txt_codigo_produtor">CODIGO DO PRODUTOR</string>
+    <string name="txt_qtd_litros">QUANTIDADE DE LITROS</string>
+    <string name="txt_temperatura">TEMPERATURA</string>
+    <string name="txt_alisarol">ALISAROL</string>
+    <string name="txt_boca_caminhao">BOCA DO CAMINHÃO</string>
+    <string name="txt_pedagio">PEDÁGIO</string>
+    <string name="txt_obs">OBSERVAÇÕES</string>
+    <string name="txt_radio_sim">SIM</string>
+    <string name="txt_radio_nao">NÃO</string>
+    <string name="hint_qtd_litros">Digite a quantidade de litros </string>
+    <string name="hint_tempe">Digite a temperatura</string>
+    <string name="hint_boca">Digite a Boca do caminhão</string>
+    <string name="hint_pedagio">Digite o valor do pedagio</string>
+    <string name="hint_obs">Digite aqui as observações(opcional)</string>
+    <string name="hint_codigo_produtor">Digite o codigo do produtor</string>
+
+
+
+
+
+
 
 </resources>

@@ -179,11 +179,11 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
         return objetos;
     }//FIM ArrayList<ObjetosPojo> getALLColeta()
 
-    //funcao deletar
-    public String deletar(){
+    //funcao deletar UM DIA
+    public String deletar(String data){
         try {
             SQLiteDatabase db = this.getWritableDatabase();
-            String QUERY = ("DELETE  FROM " + TABLE_NAME);
+            String QUERY = ("DELETE  FROM  " + TABLE_NAME + "  WHERE   _dataColeta   = '" + data + "'  ");
             db.execSQL(QUERY );
             db.close();
         }catch (Exception e){
@@ -193,7 +193,7 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     }//fim deletar
 
 
-    // funçao para contar quantos registros tem no banco
+   //função para verificar so ja foi clicado no botão iniciar
     public int inicio(){
         int num = 0;
         String click = "n";
@@ -209,6 +209,10 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
         }
         return 0;
     }//fim do contandoregistros
+
+
+    //select para verificar se foi clicado para o botão coleta extra
+
 
 
 
@@ -351,6 +355,7 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     //somando a quantidade de litros
     public Double qtdLitros(String data){
         String QUERY = "SELECT  _qtd  FROM " + TABLE_NAME + " WHERE   _dataColeta = '" + data + "'  AND  _qtd <> '' ";
+       // String QUERY = "SELECT  _qtd  FROM " + TABLE_NAME + " WHERE   _qtd   <> '' ";
         String soma = "";
         Double soma2 = 0.0;
         Double total = 0.0;
@@ -558,6 +563,23 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
         }
         return "";
     }//fim deletar
+
+
+    //verificar quantos registros tem salvo pra ser enviado
+    public int verificaKM(){
+        int numero =0;
+        SQLiteDatabase db = this.getReadableDatabase();
+        try {
+            String QUERY = "SELECT  * FROM  " + TABLE_NAME_KM + "  WHERE   _imeikm <> ''  ";
+            Cursor cursor = db.rawQuery(QUERY, null);
+            numero = cursor.getCount();
+            db.close();
+            return numero;
+        } catch (Exception e) {
+            Log.e("ERRO", e + "");
+        }
+        return 0;
+    }
 
 
 
