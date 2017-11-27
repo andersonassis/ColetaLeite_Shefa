@@ -38,8 +38,8 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     private static final String TEMPERATURA        = "_temperatura";
     private static final String ALISAROL           = "_alisarol";
     private static final String BOCA               = "_boca";
-    private static final String LATITUDE           = "_latitude";
-    private static final String LONGITUDE          = "_longitude";
+    private static final String LATITUDE           = "_latitudeLocal";
+    private static final String LONGITUDE          = "_longitudeLocal";
     private static final String OBS                = "_obs";
     private static final String DATAHORA           = "_dataHora";
     private static final String SALVOU             = "_salvou";
@@ -254,6 +254,32 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
         return null;
     }
 
+
+    //buscando o idt para começar a gravar a latitude longitude por minuto da tabela2
+    public String buscaIdtgps(String data,String Linha ){
+        String QUERY = "SELECT  _idt   FROM  " + TABLE_NAME + "  WHERE    _dataColeta   = '" + data + "'   AND   _subRota = '"+Linha+"'        ";
+        String num = "";
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            Cursor cursor = db.rawQuery(QUERY, null);
+            cursor.moveToLast();
+            num = cursor.getString(cursor.getColumnIndex("_idt"));
+            StringBuilder sb = new StringBuilder();
+            sb.append(num);
+            db.close();
+            return num.toString();
+
+        }catch (Exception e){
+            Log.e("ERRO ", e + "");
+        }
+        return null;
+    }
+
+
+
+
+
+
     //buscando o buscaLinha   para a tabela 2
     public String buscaLinha(String data){
         String QUERY = "SELECT  _subRota  FROM " + TABLE_NAME + " WHERE  _dataColeta = '" + data + "'  ";
@@ -277,8 +303,8 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
 
 
     //buscando o buscaLinha   para a tabela 2
-    public String buscarota(String data){
-        String QUERY = "SELECT  _rota   FROM " + TABLE_NAME + " WHERE   _dataColeta = '" + data + "'  ";
+    public String buscarota(String data,String Linha){
+        String QUERY = "SELECT  _rota   FROM " + TABLE_NAME + " WHERE   _dataColeta = '" + data +  "'   AND   _subRota =  '" +Linha+ "'       ";
         String rota = "";
         SQLiteDatabase db = this.getWritableDatabase();
         try {

@@ -109,8 +109,8 @@ class ColetaExtra : AppCompatActivity() {
         ctv.put("_temperatura", tempe)
         ctv.put("_alisarol", alisa)
         ctv.put("_obs", obs)
-        ctv.put("_latitude", lati)//insere latitude
-        ctv.put("_longitude", long)//insere longitude
+        ctv.put("_latitudeLocal", lati)//insere latitude
+        ctv.put("_longitudeLocal", long)//insere longitude
         ctv.put("_dataHora", data_sistemahora)
         ctv.put("_salvou",  confirmaExtra)
         ctv.put("_idt", id2)

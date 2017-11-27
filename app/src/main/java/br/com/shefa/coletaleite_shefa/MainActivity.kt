@@ -229,6 +229,8 @@ class MainActivity : AppCompatActivity() {
 
                         }//fim do for
                         progress!!.dismiss();//encerra progress
+                        ToastManager.show(this@MainActivity, "IMPORTADO COM SUCESSO", ToastManager.WARNING)
+
                     } catch (e: JSONException) {
                         // ToastManager.show(this@MainActivity, "Falha no arquivo,favor entrar em contato com a TI", ToastManager.ERROR)
                         progress!!.dismiss();//encerra progress

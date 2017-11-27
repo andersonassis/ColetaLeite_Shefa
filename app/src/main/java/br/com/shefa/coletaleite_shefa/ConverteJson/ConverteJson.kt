@@ -29,8 +29,8 @@ class ConverteJson  {
                         .key("_alisarol").value(coletaPojo.alisarol)
                         .key("_boca").value(coletaPojo.boca)
                         .key("_obs").value(coletaPojo.obs)
-                        .key("_latitude").value(coletaPojo.latitude)
-                        .key("_longitude").value(coletaPojo.longitude)
+                        .key("_latitudeLocal").value(coletaPojo.latitude)
+                        .key("_longitudeLocal").value(coletaPojo.longitude)
                         .key("_dataHora").value(coletaPojo.datahora)
                         .key("_pedagio").value(coletaPojo.pedagio)
 

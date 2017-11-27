@@ -108,8 +108,8 @@ class ListarProdutores : AppCompatActivity() {
     fun updateLinha(){
         banco!!.updateLinhas(label3,data_sistemaListar)// aqui vai escoher apenas a linha faz um update
         //variaveis para o km
-        val  idt   = banco!!.buscaIdt(data_sistemaListar)
-        val rotakm = banco!!.buscarota(data_sistemaListar)
+        val  idt   = banco!!.buscaIdtgps(data_sistemaListar,label3)
+        val rotakm = banco!!.buscarota(data_sistemaListar,label3)
 
         val coletakm = ObjetosPojo()
         coletakm.idprimary = 1

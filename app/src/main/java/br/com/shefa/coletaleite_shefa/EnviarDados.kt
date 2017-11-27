@@ -14,6 +14,7 @@ import br.com.shefa.coletaleite_shefa.ConverteJson.ConverteJson
 import br.com.shefa.coletaleite_shefa.ConverteJson.ConverteJsonKM
 import br.com.shefa.coletaleite_shefa.Datas.Datas
 import br.com.shefa.coletaleite_shefa.Toast.ToastManager
+import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.Response
@@ -136,6 +137,9 @@ class EnviarDados : AppCompatActivity() {
                 return params
             }
         }
+        val socketTimeout = 50000
+        val policy = DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        postRequest.retryPolicy = policy
         requestQueue.add(postRequest)
         banco!!.close()
 
@@ -153,6 +157,7 @@ class EnviarDados : AppCompatActivity() {
         var jsonkm = ConverteJsonKM().toJson(coletaKM)
         jsonEnviaKM = jsonkm.toString()
         requestQueueKm = Volley.newRequestQueue(this)
+       // val urlkm = "http://www.shefa-comercial.com.br:8080/coleta/ArquivoGPS/gps.php"
         val urlkm = "http://www.shefa-comercial.com.br:8080/coleta/ArquivoGPS/gps.php"
         val postRequest = object : StringRequest(Request.Method.POST, urlkm,
                 Response.Listener { resposta ->
@@ -174,7 +179,9 @@ class EnviarDados : AppCompatActivity() {
                     ToastManager.show(this@EnviarDados, "ATENÇÃO !!! \n FALHA NO ENVIO,POR FAVOR TENTAR NOVAMENTE ", ToastManager.INFORMATION)
                     error.printStackTrace()
                 }
-        ) {
+        )
+
+        {
             override fun getParams(): Map<String, String> {
                 val params = HashMap<String, String>()
                 // the POST parameters:
@@ -182,6 +189,10 @@ class EnviarDados : AppCompatActivity() {
                 return params
             }
         }
+
+        val socketTimeout = 50000
+        val policy = DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        postRequest.retryPolicy = policy
         requestQueueKm.add(postRequest)
         banco!!.close()
 
