@@ -61,6 +61,10 @@ class ColetaExtra : AppCompatActivity() {
             buscarDados()
             alterarContato()
             ToastManager.show(this@ColetaExtra, "SALVO COM SUCESSO", ToastManager.INFORMATION)
+            //aqui um intent para voltar na tela
+            val intentdados = Intent(this@ColetaExtra, ListarProdutores::class.java)
+            startActivity(intentdados)
+            finish()
 
 
         }//fim do botão salvar
