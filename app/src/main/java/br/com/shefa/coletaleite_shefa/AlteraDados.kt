@@ -155,8 +155,8 @@ class AlteraDados : AppCompatActivity() {
          ctv.put("_dataHora", datahora)
 
          if (!salvou.equals("1")) {
-             ctv.put("_latitude", latitude)
-             ctv.put("_longitude", longitude)
+             ctv.put("_latitudeLocal", latitude)
+             ctv.put("_longitudeLocal", longitude)
          }
 
          val res = db.update("tabela_coleta", ctv, "_id=?", arrayOf(id))
