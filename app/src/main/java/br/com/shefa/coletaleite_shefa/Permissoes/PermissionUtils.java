@@ -42,7 +42,7 @@ public class PermissionUtils {
         return false;
     }
 
-       // permissão para desbloquear o tablet para resetar
+       //metodo para verificar a senha para desbloquear o tablet para resetar
       public boolean senha(String senha){
           if (this.senha.equals(senha)){
               return  true;

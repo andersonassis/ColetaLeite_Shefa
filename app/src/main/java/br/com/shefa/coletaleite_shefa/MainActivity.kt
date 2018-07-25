@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        supportActionBar!!.title = "COLETA LEITE SHEFA"
+        supportActionBar!!.title = "COLETA LEITE SHEFA" // essa e a barra do app
         banco = DB_Interno(this)//chama o banco
         val gps   = Gps(this) //inicia a classe do gps
         val alert = AlertDialog.Builder(this)
