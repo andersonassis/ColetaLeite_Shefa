@@ -21,6 +21,7 @@ import br.com.shefa.coletaleite_shefa.BD_Interno.DB_Interno
 import br.com.shefa.coletaleite_shefa.Datas.Datas
 import br.com.shefa.coletaleite_shefa.Gps.GPS_Service
 import br.com.shefa.coletaleite_shefa.Objetos.ObjetosPojo
+import br.com.shefa.coletaleite_shefa.Permissoes.Desbloquear
 import br.com.shefa.coletaleite_shefa.Toast.ToastManager
 import kotlinx.android.synthetic.main.activity_listar_produtores.*
 import java.text.SimpleDateFormat
@@ -65,7 +66,7 @@ class ListarProdutores : AppCompatActivity() {
                  val iniciar ="s"
                  alterarData(iniciar)//altera data se for de dias diferentes e coloca um s no click do botão iniciar
                  updateLinha()
-                 atualizandoGPS()
+                // atualizandoGPS() // não esta usando a função pois o marinho não quis
                  onRestart()
             })
             alert.setNegativeButton("CANCELAR") { dialog, which ->  }
@@ -167,7 +168,10 @@ class ListarProdutores : AppCompatActivity() {
             ToastManager.show(this@ListarProdutores, "FAVOR IMPORTAR AS LINHAS", ToastManager.INFORMATION)
         }
            if (labels.size <=0){
-            ToastManager.show(this@ListarProdutores, "FAVOR IMPORTAR AS LINHAS", ToastManager.INFORMATION)
+               ToastManager.show(this@ListarProdutores, "FAVOR IMPORTAR OS PRODUTORES", ToastManager.INFORMATION)
+              /* val intentdados = Intent(this@ListarProdutores, MainActivity::class.java)
+               startActivity(intentdados)
+               finish()*/
             }
         return labels
     }// fim subRotaLinhas
@@ -236,8 +240,18 @@ class ListarProdutores : AppCompatActivity() {
     //menu voltar
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
+
         if (id == android.R.id.home) {
             onBackPressed()
+            return true
+        }
+
+
+         // Menu resetar
+        if (id == R.id.resetar) {
+                val resetar = Intent(applicationContext, Desbloquear::class.java)
+                startActivity(resetar)
+                finish()
             return true
         }
 
@@ -253,6 +267,9 @@ class ListarProdutores : AppCompatActivity() {
                 return true
             }
         }
+
+
+
 
 
         return super.onOptionsItemSelected(item)

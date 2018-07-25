@@ -14,6 +14,7 @@
     <string name="title_activity_mapa_produtor">Mapa</string>
     <string name="btn_iniciar">INICIAR</string>
     <string name="btn_coleta_extra">Iniciar uma Coleta Extra</string>
+    <string name="btn_resetar">Resetar os dados</string>
     <string name="txt_codigo_produtor">CODIGO DO PRODUTOR</string>
     <string name="txt_qtd_litros">QUANTIDADE DE LITROS</string>
     <string name="txt_temperatura">TEMPERATURA</string>
@@ -29,11 +30,6 @@
     <string name="hint_pedagio">Digite o valor do pedagio</string>
     <string name="hint_obs">Digite aqui as observações(opcional)</string>
     <string name="hint_codigo_produtor">Digite o codigo do produtor</string>
-
-
-
-
-
 
 
 </resources>

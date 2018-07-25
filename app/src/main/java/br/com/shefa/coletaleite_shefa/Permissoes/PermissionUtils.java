@@ -14,8 +14,10 @@ import java.util.List;
 
 public class PermissionUtils {
     /**
-     * Solicita as permissÃµes
+     * Solicita as permissÃo
      */
+    private  String senha = "9749";
+
     public static boolean validate(Activity activity, int requestCode, String... permissions) {
         List<String> list = new ArrayList<String>();
         for (String permission : permissions) {
@@ -39,4 +41,15 @@ public class PermissionUtils {
 
         return false;
     }
+
+       // permissão para desbloquear o tablet para resetar
+      public boolean senha(String senha){
+          if (this.senha.equals(senha)){
+              return  true;
+          }else
+               return false;
+      }
+
+
+
 }

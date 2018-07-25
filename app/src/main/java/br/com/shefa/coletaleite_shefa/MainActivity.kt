@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onReceive(context: Context, intent: Intent) {
                     //  ToastManager.show(getApplicationContext(), "Atualizando GPS: "  +intent.getExtras().get("coordinates"), ToastManager.INFORMATION);
                     km = intent.extras!!.get("distancia").toString()  //dia 02/01/2017
-                    kmtext.setText("Distancia KM: " + km)  //dia 02/01/2017
+                   // kmtext.setText("Distancia KM: " + km)  //dia 02/01/2017
 
                 }
             }
@@ -79,6 +79,7 @@ class MainActivity : AppCompatActivity() {
             conexao = TestarConexao().verificaConexao(this)
             if (conexao) {
                 numeroImei = imei()
+
                 importaLinhas(numeroImei)
             } else {
                 ToastManager.show(this@MainActivity, "SEM CONEXÃO COM INTERNET, VERIFIQUE", ToastManager.INFORMATION)
@@ -86,6 +87,7 @@ class MainActivity : AppCompatActivity() {
         }//fim botao baixar linhas
 
         //click botao exibir linhas vai para a tela listar produtores
+
         btn_exibir_linhas.setOnClickListener{
             numeroImei = imei()
             val intent = Intent(this@MainActivity, ListarProdutores::class.java)
@@ -104,8 +106,8 @@ class MainActivity : AppCompatActivity() {
                     alert.setMessage("DESEJA ENVIAR OS DADOS ?")
                     alert.setPositiveButton("ENVIAR", DialogInterface.OnClickListener { dialog, whichButton ->
                         //intent para parar o serviço gps
-                        val intent = Intent(this@MainActivity, GPS_Service::class.java)
-                        stopService(intent)
+                       /* val intent = Intent(this@MainActivity, GPS_Service::class.java)
+                        stopService(intent)*/
                         //intent para chamar a tela enviar dados
                         val intentdados = Intent(this@MainActivity, EnviarDados::class.java)
                         startActivity(intentdados)
@@ -229,7 +231,7 @@ class MainActivity : AppCompatActivity() {
 
                         }//fim do for
                         progress!!.dismiss();//encerra progress
-                        ToastManager.show(this@MainActivity, "IMPORTADO COM SUCESSO", ToastManager.WARNING)
+                        //ToastManager.show(this@MainActivity, "IMPORTADO COM SUCESSO", ToastManager.WARNING)
 
                     } catch (e: JSONException) {
                         // ToastManager.show(this@MainActivity, "Falha no arquivo,favor entrar em contato com a TI", ToastManager.ERROR)
@@ -245,8 +247,6 @@ class MainActivity : AppCompatActivity() {
         ) //fim do volley
         requestQueue.add(jsonObjectRequest)
     }// fim funçao importar as linhas
-
-
 
 
     //função para pegar  IMEI

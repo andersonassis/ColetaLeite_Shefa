@@ -11,6 +11,7 @@ import android.widget.RadioGroup
 import br.com.shefa.coletaleite_shefa.BD_Interno.DB_Interno
 import br.com.shefa.coletaleite_shefa.Datas.Datas
 import br.com.shefa.coletaleite_shefa.Gps.Gps
+import br.com.shefa.coletaleite_shefa.Permissoes.Desbloquear
 import br.com.shefa.coletaleite_shefa.Toast.ToastManager
 import kotlinx.android.synthetic.main.activity_altera_dados.*
 import kotlinx.android.synthetic.main.activity_coleta_extra.*
@@ -148,22 +149,6 @@ class ColetaExtra : AppCompatActivity() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     //menu voltar
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
@@ -173,6 +158,9 @@ class ColetaExtra : AppCompatActivity() {
             finish()
             return true
         }
+
+
+
         return super.onOptionsItemSelected(item)
     }//fim do menu voltar
 }//fim da classe

@@ -3,6 +3,7 @@ package br.com.shefa.coletaleite_shefa
 import android.app.ProgressDialog
 import android.content.ContentValues
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -37,6 +38,7 @@ class EnviarDados : AppCompatActivity() {
     var data:String = ""
     var envioKm:Int = 0
     var data_deletar:String = ""
+    var dataColetaDia:String = ""
 
 
 
@@ -49,6 +51,9 @@ class EnviarDados : AppCompatActivity() {
         datas = Datas()//chama a classe datas
         data = datas!!.data()
         data_deletar = datas!!.dataMenosUm()
+        dataColetaDia = banco!!.dataColetaDia()
+        val alert = AlertDialog.Builder(this)
+
 
 
         //somando a quantidade de litros
@@ -67,12 +72,20 @@ class EnviarDados : AppCompatActivity() {
         btn_enviar_dados2.setOnClickListener{
             conexao = TestarConexao().verificaConexao(this)
             if (conexao) {
-                val resposta = banco!!.retornoServ(data)
-                 if(resposta == 0) {
-                     enviardados()
-                 }else{
-                     ToastManager.show(this@EnviarDados, "ARQUIVOS JA FORAM ENVIADOS", ToastManager.INFORMATION)
-                 }
+                if (dataColetaDia.equals(data)){
+                    val resposta = banco!!.retornoServ(data)
+                    if(resposta == 0 && qtd_litros>0 )  { //ajuste aqui paa enviar apenas qtd maior que zero   dia 14/02/2018
+                        enviardados()
+                    }else{
+                        ToastManager.show(this@EnviarDados, "ARQUIVOS NÃO PODE SER ENVIADO", ToastManager.INFORMATION)
+                    }
+
+                }else{
+                    alert.setTitle("ATENÇÃO !!!")
+                    alert.setMessage("A DATA DA COLETA NÃO É DO MESMO DIA E NÃO PODE SER ENVIADA")
+                    alert.setNegativeButton("CANCELAR") { dialog, which -> }
+                    alert.show()
+                }
 
             } else {
                 ToastManager.show(this@EnviarDados, "SEM CONEXÃO COM INTERNET, VERIFIQUE", ToastManager.INFORMATION)
@@ -80,11 +93,11 @@ class EnviarDados : AppCompatActivity() {
         }//fim do botao enviar dados
 
 
-        btn_envia_km.setOnClickListener{
+       /* btn_envia_km.setOnClickListener{
             conexao = TestarConexao().verificaConexao(this)
             envioKm = banco!!.verificaKM()
             if (conexao) {
-                if (envioKm >0) {
+                if (envioKm >0 && qtd_litros>0 ) {//ajuste aqui paa enviar apenas qtd maior que zero   dia 14/02/2018
                     envioKM()
                 }else{
                     ToastManager.show(this@EnviarDados, "NÃO EXISTE ARQUIVO DE KM A SER ENVIADO", ToastManager.INFORMATION)
@@ -92,7 +105,7 @@ class EnviarDados : AppCompatActivity() {
             } else {
                 ToastManager.show(this@EnviarDados, "SEM CONEXÃO COM INTERNET, VERIFIQUE", ToastManager.INFORMATION)
             }
-        }//fim do botao enviar dados
+        }//fim do botao enviar dados   */
 
 
     }// fim do oncreate

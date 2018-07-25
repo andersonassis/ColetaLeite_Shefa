@@ -19,7 +19,7 @@ import br.com.shefa.coletaleite_shefa.Objetos.ObjetosPojo;
  */
 
 public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
-    //Campos da tabela tabela_mapeamento
+    //Campos da tabela tabela1
     private static final int DB_VERSION            = 1;
     private static final String DB_NAME            = "captacao.db";
     private static final String TABLE_NAME         = "tabela_coleta";
@@ -211,9 +211,6 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     }//fim do contandoregistros
 
 
-    //select para verificar se foi clicado para o botão coleta extra
-
-
 
 
 
@@ -268,6 +265,27 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
             sb.append(num);
             db.close();
             return num.toString();
+
+        }catch (Exception e){
+            Log.e("ERRO ", e + "");
+        }
+        return null;
+    }
+
+
+    //buscando a data da coleta
+    public String dataColetaDia(){
+        String QUERY = "SELECT  _dataColeta  FROM " + TABLE_NAME + "   ";
+        String data = "";
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            Cursor cursor = db.rawQuery(QUERY, null);
+            cursor.moveToLast();
+            data = cursor.getString(cursor.getColumnIndex("_dataColeta"));
+            StringBuilder sb = new StringBuilder();
+            sb.append(data);
+            db.close();
+            return data.toString();
 
         }catch (Exception e){
             Log.e("ERRO ", e + "");
@@ -485,6 +503,22 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
 
 
 
+    //funcao deletar todos os dados
+    public void reset(){
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            String QUERY = ("DELETE  FROM " + TABLE_NAME);
+            db.execSQL(QUERY );
+            db.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }//fim deletar
+
+
+
+
 
 
 
@@ -577,7 +611,7 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     }
 
 
-    //funcao deletar
+    //funcao deletar KM
     public String deletarKM(){
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -606,6 +640,11 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
         }
         return 0;
     }
+
+
+
+
+
 
 
 

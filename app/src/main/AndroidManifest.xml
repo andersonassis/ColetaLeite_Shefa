@@ -16,6 +16,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
+    <!-- fim das permissoes necessarias do app -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/icone_shefa"
@@ -43,8 +44,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".AlteraDados"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".ColetaExtra"></activity>
+            android:screenOrientation="portrait" />
+        <activity android:name=".ColetaExtra" />
+        <activity android:name=".Permissoes.Desbloquear"></activity>
     </application>
 
 </manifest>
